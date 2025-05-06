@@ -1,22 +1,27 @@
-﻿@{
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
 
-<form method="post">
-    <div>
-        <label>Username:</label>
-        <input type="text" name="username" required />
-    </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password" required />
-    </div>
-    <button type="submit">Entrar</button>
-</form>
 
-@if (ViewBag.Error != null)
-{
-    <p style="color:red;">@ViewBag.Error</p>
-}
+<link rel="stylesheet" href="~/css/login.css" />
+
+<div class="container">
+    <h2>Bem-vindo ao EdVee</h2>
+
+    <form method="post" asp-controller="Conta" asp-action="Login">
+        <label for="username">Utilizador</label>
+        <input type="text" name="username" id="username" required />
+
+        <label for="password">Palavra-chave</label>
+        <input type="password" name="password" id="password" required />
+
+        <button type="submit">Entrar</button>
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="error">@ViewBag.Error</div>
+    }
+</div>

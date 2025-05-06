@@ -15,11 +15,11 @@ namespace Edveeeeeee.Controllers
 
         public IActionResult Index()
         {
-            var user = HttpContext.Session.GetString("user");
-            if (string.IsNullOrEmpty(user))
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("user")))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Login", "Conta");
             }
+
             return View();
         }
 

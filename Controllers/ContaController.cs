@@ -12,7 +12,6 @@ namespace Edveeeeeee.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            // Autenticação mock (simples)
             if (username == "prof" && password == "1234")
             {
                 HttpContext.Session.SetString("user", username);
