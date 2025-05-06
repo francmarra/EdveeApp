@@ -1,6 +1,9 @@
 ﻿@if (Context.Session.GetString("user") != null)
 {
-    <a href="/Account/Logout">Logout (@Context.Session.GetString("user"))</a>
+    <div class="text-end me-3">
+        <span>Bem-vindo, @Context.Session.GetString("user")</span> |
+        <a href="/Conta/Logout">Logout</a>
+    </div>
 }
 <!DOCTYPE html>
 <html lang="en">
