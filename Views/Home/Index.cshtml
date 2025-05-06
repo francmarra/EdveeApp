@@ -1,8 +1,46 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
+    var username = Context.Session.GetString("user") ?? "Docente";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/dashboard.css" />
+
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="logo">utad</div>
+        <nav>
+            <ul>
+                <li>Dados Pessoais</li>
+                <li>Notificações</li>
+                <li>Horário</li>
+                <li>Minhas Disciplinas</li>
+                <li>Balcão Académico</li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="user-info">
+                <span>@username</span> |
+                <a href="/Conta/Logout">Sair</a>
+            </div>
+        </header>
+
+        <section class="cards">
+            <div class="card">
+                <h3>Bem-vindo ao EdVee</h3>
+                <p>Comece por configurar a sua Unidade Curricular.</p>
+                <a class="edvee-button" href="#">Ir para EdVee</a>
+            </div>
+            <div class="card decorative">
+                <h3>Notificações</h3>
+                <p>Sem novas mensagens.</p>
+            </div>
+            <div class="card decorative">
+                <h3>Calendário</h3>
+                <p>Nenhuma aula agendada.</p>
+            </div>
+        </section>
+    </main>
 </div>
