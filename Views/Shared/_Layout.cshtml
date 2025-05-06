@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@if (Context.Session.GetString("user") != null)
+{
+    <a href="/Account/Logout">Logout (@Context.Session.GetString("user"))</a>
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
