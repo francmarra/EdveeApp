@@ -1,6 +1,10 @@
 ﻿@model List<Edveeeeeee.Models.UnidadeCurricular>
 
-<h2>Unidades Curriculares</h2>
+<h2 style="color: #a60000;">LICENCIATURA EM ENGENHARIA INFORMÁTICA</h2>
+
+<div style="text-align: right; margin-bottom: 15px;">
+    <a href="/UC/Create" class="btn-nova-uc">+ Nova Unidade Curricular</a>
+</div>
 
 <table>
     <thead>
@@ -9,6 +13,7 @@
             <th>Código</th>
             <th>Turmas</th>
             <th>Regime</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +24,9 @@
                 <td>@uc.Codigo</td>
                 <td>@uc.Turmas</td>
                 <td>@uc.Regime</td>
+                <td>
+                    <a class="btn-detalhes" href="/UC/Edit/@uc.Id">Editar</a>
+                </td>
             </tr>
         }
     </tbody>
