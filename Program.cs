@@ -11,10 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(); // Sessões ativadas
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=edvee.db"));
+    options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=EdveeDb;Trusted_Connection=True;"));
+
+
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    DbInitializer.Initialize(db);
+}
 
 app.UseStaticFiles();
 app.UseRouting();
