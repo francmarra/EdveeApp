@@ -1,20 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using Edveeeeeee.Data;
+using Edveeeeeee.Models;
 
 namespace Edveeeeeee.Controllers
 {
     public class ContaController : Controller
     {
+        private readonly AppDbContext _context;
+
+        public ContaController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: /Conta/Login
         public IActionResult Login()
         {
             return View();
         }
 
+        // POST: /Conta/Login
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            if (username == "prof" && password == "1234")
+            var professor = _context.Professores
+                .FirstOrDefault(p => p.Username == username && p.Password == password);
+
+            if (professor != null)
             {
-                HttpContext.Session.SetString("user", username);
+                HttpContext.Session.SetString("user", professor.Username);
+                HttpContext.Session.SetInt32("userId", professor.Id);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -22,6 +39,7 @@ namespace Edveeeeeee.Controllers
             return View();
         }
 
+        // GET: /Conta/Logout
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

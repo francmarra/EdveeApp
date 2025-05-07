@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edveeeeeee.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250507190935_SqlServerInit")]
-    partial class SqlServerInit
+    [Migration("20250507191544_InitFresh")]
+    partial class InitFresh
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
