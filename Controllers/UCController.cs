@@ -1,18 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Edveeeeeee.Models;
+using Edveeeeeee.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace Edveeeeeee.Controllers
 {
     public class UCController : Controller
     {
+        private readonly AppDbContext _context;
+
+        public UCController(AppDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            var ucs = new List<UnidadeCurricular>
+            int? userId = HttpContext.Session.GetInt32("userId");
+
+            if (userId == null)
             {
-                new UnidadeCurricular { Nome = "Engenharia de Software", Codigo = "14307", Turmas = "PL6, T1", Regime = "1.º Semestre" },
-                new UnidadeCurricular { Nome = "Programação Multiplataforma", Codigo = "14213", Turmas = "PL4, T1", Regime = "2.º Semestre" },
-                // Podes adicionar mais UCs aqui
-            };
+                return RedirectToAction("Login", "Conta");
+            }
+
+            var ucs = _context.UCs
+                .Where(uc => uc.ProfessorId == userId)
+                .ToList();
 
             return View(ucs);
         }

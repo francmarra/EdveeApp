@@ -15,13 +15,11 @@ namespace Edveeeeeee.Controllers
             _context = context;
         }
 
-        // GET: /Conta/Login
         public IActionResult Login()
         {
             return View();
         }
 
-        // POST: /Conta/Login
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
@@ -30,7 +28,7 @@ namespace Edveeeeeee.Controllers
 
             if (professor != null)
             {
-                HttpContext.Session.SetString("user", professor.Username);
+                HttpContext.Session.SetString("user", professor.Nome);
                 HttpContext.Session.SetInt32("userId", professor.Id);
                 return RedirectToAction("Index", "Home");
             }
@@ -39,7 +37,6 @@ namespace Edveeeeeee.Controllers
             return View();
         }
 
-        // GET: /Conta/Logout
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

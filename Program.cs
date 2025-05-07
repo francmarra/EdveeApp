@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=EdveeDb;Trusted_Connection=True;"));
 
 
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();
