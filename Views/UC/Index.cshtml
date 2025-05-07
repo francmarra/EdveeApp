@@ -1,0 +1,62 @@
+﻿@model List<Edveeeeeee.Models.UnidadeCurricular>
+@{
+    ViewData["Title"] = "Unidades Curriculares";
+}
+
+<h2>LICENCIATURA EM ENGENHARIA INFORMÁTICA</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Código</th>
+            <th>Turmas</th>
+            <th>Regime</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var uc in Model)
+        {
+            <tr>
+                <td>@uc.Nome</td>
+                <td>@uc.Codigo</td>
+                <td>@uc.Turmas</td>
+                <td>@uc.Regime</td>
+                <td><a class="btn-detalhes" href="#">Detalhes</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 5px;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    th {
+        background-color: #eee;
+        text-align: left;
+    }
+
+    .btn-detalhes {
+        background-color: #5c788a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .btn-detalhes:hover {
+        background-color: #3c5a66;
+    }
+</style>
