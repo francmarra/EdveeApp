@@ -1,7 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using Edveeeeeee.Data; // se tiveres a pasta Data
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(); // Sessões ativadas
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=edvee.db"));
+
 
 var app = builder.Build();
 
