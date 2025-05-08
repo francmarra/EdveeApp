@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Edveeeeeee.Data; // se tiveres a pasta Data
 
 
-
+//11
 
 var builder = WebApplication.CreateBuilder(args);
 
