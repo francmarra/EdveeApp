@@ -1,0 +1,19 @@
+﻿@model Edveeeeeee.Models.UnidadeCurricular
+
+<h2>Nova Unidade Curricular</h2>
+
+<form asp-action="Create" method="post">
+    <label>Nome:</label>
+    <input type="text" name="Nome" class="form-control" required />
+
+    <label>Código:</label>
+    <input type="text" name="Codigo" class="form-control" required />
+
+    <label>Turmas:</label>
+    <input type="text" name="Turmas" class="form-control" required />
+
+    <label>Regime:</label>
+    <input type="text" name="Regime" class="form-control" required />
+
+    <button type="submit">Criar</button>
+</form>

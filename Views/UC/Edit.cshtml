@@ -1,0 +1,21 @@
+﻿@model Edveeeeeee.Models.UnidadeCurricular
+
+<h2>Editar Unidade Curricular</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <label>Nome:</label>
+    <input asp-for="Nome" class="form-control" required />
+
+    <label>Código:</label>
+    <input asp-for="Codigo" class="form-control" required />
+
+    <label>Turmas:</label>
+    <input asp-for="Turmas" class="form-control" required />
+
+    <label>Regime:</label>
+    <input asp-for="Regime" class="form-control" required />
+
+    <button type="submit">Guardar</button>
+</form>
