@@ -4,16 +4,33 @@
 
 <form asp-action="Create" method="post">
     <label>Nome:</label>
-    <input type="text" name="Nome" class="form-control" required />
+    <input asp-for="Nome" class="form-control" required />
 
     <label>Código:</label>
-    <input type="text" name="Codigo" class="form-control" required />
+    <input asp-for="Codigo" class="form-control" required />
 
     <label>Turmas:</label>
-    <input type="text" name="Turmas" class="form-control" required />
+    <input asp-for="Turmas" class="form-control" required />
 
     <label>Regime:</label>
-    <input type="text" name="Regime" class="form-control" required />
+    <input asp-for="Regime" class="form-control" required />
 
-    <button type="submit">Criar</button>
+    <label>Descrição:</label>
+    <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
+
+    <h3>EdVee</h3>
+
+    <label>Competências:</label>
+    <textarea asp-for="Competencias" class="form-control" rows="3" placeholder="Uma por linha"></textarea>
+
+    <label>Conteúdos:</label>
+    <textarea asp-for="Conteudos" class="form-control" rows="3" placeholder="Um por linha"></textarea>
+
+    <label>Atividades:</label>
+    <textarea asp-for="Atividades" class="form-control" rows="3" placeholder="Uma por linha"></textarea>
+
+    <label>Avaliação:</label>
+    <textarea asp-for="Avaliacao" class="form-control" rows="3" placeholder="Um método por linha"></textarea>
+
+    <button type="submit" class="btn-nova-uc">Criar</button>
 </form>
