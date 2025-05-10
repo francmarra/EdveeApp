@@ -1,0 +1,64 @@
+﻿@model Edveeeeeee.Models.ViewModels.EdVeeViewModel
+
+<h2>EdVee: @Model.UnidadeCurricular.Nome</h2>
+
+<div class="edvee-grid">
+    <div class="edvee-column">
+        <h3>Competências</h3>
+        <ul>
+            @foreach (var item in Model.Competencias)
+            {
+                <li>@item.Texto</li>
+            }
+        </ul>
+    </div>
+    <div class="edvee-column">
+        <h3>Conteúdos</h3>
+        <ul>
+            @foreach (var item in Model.Conteudos)
+            {
+                <li>@item.Texto</li>
+            }
+        </ul>
+    </div>
+    <div class="edvee-column">
+        <h3>Atividades</h3>
+        <ul>
+            @foreach (var item in Model.Atividades)
+            {
+                <li>@item.Texto</li>
+            }
+        </ul>
+    </div>
+    <div class="edvee-column">
+        <h3>Avaliação</h3>
+        <ul>
+            @foreach (var item in Model.Avaliacoes)
+            {
+                <li>@item.Texto</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<style>
+    .edvee-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .edvee-column {
+        background-color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 6px rgba(0,0,0,0.1);
+    }
+
+        .edvee-column h3 {
+            color: #a60000;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+</style>

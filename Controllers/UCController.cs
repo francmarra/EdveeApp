@@ -3,6 +3,7 @@ using Edveeeeeee.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Edveeeeeee.Models;
+using Edveeeeeee.Models.ViewModels;
 
 namespace Edveeeeeee.Controllers
 {
@@ -63,5 +64,23 @@ namespace Edveeeeeee.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        public IActionResult EdVee(int id)
+        {
+            var uc = _context.UCs.FirstOrDefault(u => u.Id == id);
+            if (uc == null) return NotFound();
+
+            var model = new EdVeeViewModel
+            {
+                UnidadeCurricular = uc,
+                Competencias = _context.Competencias.Where(c => c.UnidadeCurricularId == id).ToList(),
+                Conteudos = _context.Conteudos.Where(c => c.UnidadeCurricularId == id).ToList(),
+                Atividades = _context.Atividades.Where(a => a.UnidadeCurricularId == id).ToList(),
+                Avaliacoes = _context.Avaliacoes.Where(a => a.UnidadeCurricularId == id).ToList()
+            };
+
+            return View(model);
+        }
+
     }
 }

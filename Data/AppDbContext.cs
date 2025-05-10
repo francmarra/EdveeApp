@@ -10,5 +10,11 @@ namespace Edveeeeeee.Data
 
         public DbSet<Professor> Professores { get; set; }
         public DbSet<UnidadeCurricular> UCs { get; set; }
+
+        public DbSet<Competencia> Competencias { get; set; }
+        public DbSet<Conteudo> Conteudos { get; set; }
+        public DbSet<Atividade> Atividades { get; set; }
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
+
     }
 }
