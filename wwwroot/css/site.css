@@ -141,3 +141,19 @@ th {
     .btn-detalhes:hover {
         background-color: #3c5a66;
     }
+
+
+.btn-small {
+    background-color: #a60000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .btn-small:hover {
+        background-color: #800000;
+    }

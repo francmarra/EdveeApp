@@ -38,17 +38,122 @@ namespace Edveeeeeee.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(UnidadeCurricular uc)
+        public IActionResult Create(UnidadeCurricular uc, string competencias, string conteudos, string atividades, string avaliacao)
         {
             var userId = HttpContext.Session.GetInt32("userId");
             if (userId == null) return RedirectToAction("Login", "Conta");
 
             uc.ProfessorId = (int)userId;
             _context.UCs.Add(uc);
+            _context.SaveChanges(); // agora temos o ID da UC
+
+            // Processar campos EdVee (um por linha)
+            var compList = competencias?.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList() ?? new();
+            var contList = conteudos?.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList() ?? new();
+            var ativList = atividades?.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList() ?? new();
+            var avalList = avaliacao?.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList() ?? new();
+
+            _context.Competencias.AddRange(compList.Select(c => new Competencia { Texto = c.Trim(), UnidadeCurricularId = uc.Id }));
+            _context.Conteudos.AddRange(contList.Select(c => new Conteudo { Texto = c.Trim(), UnidadeCurricularId = uc.Id }));
+            _context.Atividades.AddRange(ativList.Select(a => new Atividade { Texto = a.Trim(), UnidadeCurricularId = uc.Id }));
+            _context.Avaliacoes.AddRange(avalList.Select(a => new Avaliacao { Texto = a.Trim(), UnidadeCurricularId = uc.Id }));
+
             _context.SaveChanges();
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult AddCompetencia(int ucId, string texto)
+        {
+            if (!string.IsNullOrWhiteSpace(texto))
+            {
+                _context.Competencias.Add(new Competencia { Texto = texto.Trim(), UnidadeCurricularId = ucId });
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("EdVee", new { id = ucId });
+        }
+
+        public IActionResult EditCompetencia(int id)
+        {
+            var competencia = _context.Competencias.FirstOrDefault(c => c.Id == id);
+            if (competencia == null) return NotFound();
+            return View(competencia);
+        }
+
+        [HttpPost]
+        public IActionResult EditCompetencia(Competencia model)
+        {
+            _context.Competencias.Update(model);
+            _context.SaveChanges();
+            return RedirectToAction("EdVee", new { id = model.UnidadeCurricularId });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCompetencia(int id)
+        {
+            var comp = _context.Competencias.FirstOrDefault(c => c.Id == id);
+            if (comp != null)
+            {
+                int ucId = comp.UnidadeCurricularId;
+                _context.Competencias.Remove(comp);
+                _context.SaveChanges();
+                return RedirectToAction("EdVee", new { id = ucId });
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public IActionResult AddConteudo(int ucId, string texto)
+        {
+            if (!string.IsNullOrWhiteSpace(texto))
+            {
+                _context.Conteudos.Add(new Conteudo
+                {
+                    Texto = texto.Trim(),
+                    UnidadeCurricularId = ucId
+                });
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("EdVee", new { id = ucId });
+        }
+
+        [HttpPost]
+        public IActionResult AddAtividade(int ucId, string texto)
+        {
+            if (!string.IsNullOrWhiteSpace(texto))
+            {
+                _context.Atividades.Add(new Atividade
+                {
+                    Texto = texto.Trim(),
+                    UnidadeCurricularId = ucId
+                });
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("EdVee", new { id = ucId });
+        }
+
+        [HttpPost]
+        public IActionResult AddAvaliacao(int ucId, string texto)
+        {
+            if (!string.IsNullOrWhiteSpace(texto))
+            {
+                _context.Avaliacoes.Add(new Avaliacao
+                {
+                    Texto = texto.Trim(),
+                    UnidadeCurricularId = ucId
+                });
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("EdVee", new { id = ucId });
+        }
+
+
+
 
         public IActionResult Edit(int id)
         {

@@ -1,0 +1,13 @@
+﻿@model Edveeeeeee.Models.Competencia
+
+<h2>Editar Competência</h2>
+
+<form asp-action="EditCompetencia" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UnidadeCurricularId" />
+
+    <label>Texto:</label>
+    <input asp-for="Texto" class="form-control" required />
+
+    <button type="submit" class="btn-detalhes">Guardar</button>
+</form>

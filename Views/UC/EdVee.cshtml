@@ -2,63 +2,125 @@
 
 <h2>EdVee: @Model.UnidadeCurricular.Nome</h2>
 
-<div class="edvee-grid">
-    <div class="edvee-column">
-        <h3>Competências</h3>
-        <ul>
-            @foreach (var item in Model.Competencias)
-            {
-                <li>@item.Texto</li>
-            }
-        </ul>
+<div class="edvee-matrix">
+    <div class="edvee-row">
+        <div class="edvee-box">@* Competências *@
+            <h3>Competências</h3>
+            <ul>
+                @foreach (var item in Model.Competencias)
+                {
+                    <li>
+                        @item.Texto
+                        <a href="/UC/EditCompetencia/@item.Id" class="btn-editar-inline">Editar</a>
+                        <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta competência?');">Eliminar</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+            <form asp-action="AddCompetencia" method="post">
+                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                <input type="text" name="texto" placeholder="Nova competência..." class="form-control" />
+                <button type="submit" class="btn-small">+</button>
+            </form>
+        </div>
+
+        <div class="edvee-box">@* Avaliação *@
+            <h3>Avaliação</h3>
+            <ul>
+                @foreach (var item in Model.Avaliacoes)
+                {
+                    <li>@item.Texto</li>
+                }
+            </ul>
+            <form asp-action="AddAvaliacao" method="post">
+                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                <input type="text" name="texto" placeholder="Nova avaliação..." class="form-control" />
+                <button type="submit" class="btn-small">+</button>
+            </form>
+        </div>
     </div>
-    <div class="edvee-column">
-        <h3>Conteúdos</h3>
-        <ul>
-            @foreach (var item in Model.Conteudos)
-            {
-                <li>@item.Texto</li>
-            }
-        </ul>
-    </div>
-    <div class="edvee-column">
-        <h3>Atividades</h3>
-        <ul>
-            @foreach (var item in Model.Atividades)
-            {
-                <li>@item.Texto</li>
-            }
-        </ul>
-    </div>
-    <div class="edvee-column">
-        <h3>Avaliação</h3>
-        <ul>
-            @foreach (var item in Model.Avaliacoes)
-            {
-                <li>@item.Texto</li>
-            }
-        </ul>
+
+    <div class="edvee-row">
+        <div class="edvee-box">@* Conteúdos *@
+            <h3>Conteúdos</h3>
+            <ul>
+                @foreach (var item in Model.Conteudos)
+                {
+                    <li>@item.Texto</li>
+                }
+            </ul>
+            <form asp-action="AddConteudo" method="post">
+                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                <input type="text" name="texto" placeholder="Novo conteúdo..." class="form-control" />
+                <button type="submit" class="btn-small">+</button>
+            </form>
+        </div>
+
+        <div class="edvee-box">@* Atividades *@
+            <h3>Atividades</h3>
+            <ul>
+                @foreach (var item in Model.Atividades)
+                {
+                    <li>@item.Texto</li>
+                }
+            </ul>
+            <form asp-action="AddAtividade" method="post">
+                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                <input type="text" name="texto" placeholder="Nova atividade..." class="form-control" />
+                <button type="submit" class="btn-small">+</button>
+            </form>
+        </div>
     </div>
 </div>
 
+
 <style>
-    .edvee-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+    .edvee-matrix {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
         margin-top: 30px;
     }
 
-    .edvee-column {
+    .edvee-row {
+        display: flex;
+        gap: 30px;
+        justify-content: space-between;
+    }
+
+    .edvee-box {
+        flex: 1;
         background-color: white;
         padding: 15px;
         border-radius: 8px;
-        box-shadow: 0px 0px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
     }
 
-        .edvee-column h3 {
+        .edvee-box h3 {
             color: #a60000;
             border-bottom: 1px solid #ccc;
             padding-bottom: 5px;
         }
+
+
+    .btn-editar-inline, .btn-apagar-inline {
+        background: none;
+        border: none;
+        color: #a60000;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 10px;
+        text-decoration: underline;
+    }
+
+        .btn-editar-inline:hover,
+        .btn-apagar-inline:hover {
+            color: #800000;
+        }
+
+
+
 </style>
