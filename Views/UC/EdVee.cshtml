@@ -9,23 +9,29 @@
     </p>
 }
 
-<div class="edvee-table">
+<div class="edvee-matrix">
     <div class="edvee-row">
-        <div class="edvee-box">@* Competências *@
+        <!-- Competências -->
+        <div class="edvee-box">
             <h3>Competências</h3>
-            <ul>
-                @foreach (var item in Model.Competencias)
-                {
-                    <li>
-                        @item.Texto
-                        <a href="/UC/EditCompetencia/@item.Id" class="btn-editar-inline">Editar</a>
-                        <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta competência?');">Eliminar</button>
-                        </form>
-                    </li>
-                }
-            </ul>
+            <table class="edvee-table">
+                <tbody>
+                    @foreach (var item in Model.Competencias)
+                    {
+                        <tr>
+                            <td>@item.Texto</td>
+                            <td style="text-align:right;">
+                                <a href="/UC/EditCompetencia/@item.Id" class="btn-editar-inline">Editar</a>
+                                <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta competência?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
             <form asp-action="AddCompetencia" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova competência..." class="form-control" />
@@ -33,21 +39,27 @@
             </form>
         </div>
 
-        <div class="edvee-box">@* Avaliação *@
+        <!-- Avaliação -->
+        <div class="edvee-box">
             <h3>Avaliação</h3>
-            <ul>
-                @foreach (var item in Model.Avaliacoes)
-                {
-                    <li>
-                        @item.Texto
-                        <a href="/UC/EditAvaliacao/@item.Id" class="btn-editar-inline">Editar</a>
-                        <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta avaliação?');">Eliminar</button>
-                        </form>
-                    </li>
-                }
-            </ul>
+            <table class="edvee-table">
+                <tbody>
+                    @foreach (var item in Model.Avaliacoes)
+                    {
+                        <tr>
+                            <td>@item.Texto</td>
+                            <td style="text-align:right;">
+                                <a href="/UC/EditAvaliacao/@item.Id" class="btn-editar-inline">Editar</a>
+                                <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta avaliação?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
             <form asp-action="AddAvaliacao" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova avaliação..." class="form-control" />
@@ -57,21 +69,27 @@
     </div>
 
     <div class="edvee-row">
-        <div class="edvee-box">@* Conteúdos *@
+        <!-- Conteúdos -->
+        <div class="edvee-box">
             <h3>Conteúdos</h3>
-            <ul>
-                @foreach (var item in Model.Conteudos)
-                {
-                    <li>
-                        @item.Texto
-                        <a href="/UC/EditConteudo/@item.Id" class="btn-editar-inline">Editar</a>
-                        <form asp-action="DeleteConteudo" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar este conteúdo?');">Eliminar</button>
-                        </form>
-                    </li>
-                }
-            </ul>
+            <table class="edvee-table">
+                <tbody>
+                    @foreach (var item in Model.Conteudos)
+                    {
+                        <tr>
+                            <td>@item.Texto</td>
+                            <td style="text-align:right;">
+                                <a href="/UC/EditConteudo/@item.Id" class="btn-editar-inline">Editar</a>
+                                <form asp-action="DeleteConteudo" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar este conteúdo?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
             <form asp-action="AddConteudo" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Novo conteúdo..." class="form-control" />
@@ -79,21 +97,27 @@
             </form>
         </div>
 
-        <div class="edvee-box">@* Atividades *@
+        <!-- Atividades -->
+        <div class="edvee-box">
             <h3>Atividades</h3>
-            <ul>
-                @foreach (var item in Model.Atividades)
-                {
-                    <li>
-                        @item.Texto
-                        <a href="/UC/EditAtividade/@item.Id" class="btn-editar-inline">Editar</a>
-                        <form asp-action="DeleteAtividade" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta atividade?');">Eliminar</button>
-                        </form>
-                    </li>
-                }
-            </ul>
+            <table class="edvee-table">
+                <tbody>
+                    @foreach (var item in Model.Atividades)
+                    {
+                        <tr>
+                            <td>@item.Texto</td>
+                            <td style="text-align:right;">
+                                <a href="/UC/EditAtividade/@item.Id" class="btn-editar-inline">Editar</a>
+                                <form asp-action="DeleteAtividade" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta atividade?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
             <form asp-action="AddAtividade" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova atividade..." class="form-control" />
@@ -102,7 +126,6 @@
         </div>
     </div>
 </div>
-
 
 <style>
     .edvee-matrix {
@@ -124,17 +147,29 @@
         padding: 15px;
         border-radius: 8px;
         box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-        min-height: 200px;
     }
 
         .edvee-box h3 {
             color: #a60000;
             border-bottom: 1px solid #ccc;
             padding-bottom: 5px;
+            margin-top: 0;
         }
 
+    .edvee-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+    }
 
-    .btn-editar-inline, .btn-apagar-inline {
+        .edvee-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #ccc;
+            vertical-align: middle;
+        }
+
+    .btn-editar-inline,
+    .btn-apagar-inline {
         background: none;
         border: none;
         color: #a60000;
@@ -149,6 +184,18 @@
             color: #800000;
         }
 
+    .btn-small {
+        background-color: #a60000;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 5px;
+    }
 
-
+        .btn-small:hover {
+            background-color: #800000;
+        }
 </style>

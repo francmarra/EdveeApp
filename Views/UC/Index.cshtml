@@ -1,18 +1,17 @@
-﻿@model List<Edveeeeeee.Models.UnidadeCurricular>
+﻿@model IEnumerable<Edveeeeeee.Models.UnidadeCurricular>
 
-<h2 style="color: #a60000;">LICENCIATURA EM ENGENHARIA INFORMÁTICA</h2>
+<h2 class="titulo">LICENCIATURA EM ENGENHARIA INFORMÁTICA</h2>
 
-<div style="text-align: right; margin-bottom: 15px;">
-    <a href="/UC/Create" class="btn-nova-uc">+ Nova Unidade Curricular</a>
+<div style="text-align: right; margin-bottom: 10px;">
+    <a class="btn-nova-uc" href="/UC/Create">+ Nova Unidade Curricular</a>
 </div>
 
-<table>
+<table class="tabela-ucs">
     <thead>
         <tr>
             <th>Nome</th>
             <th>Código</th>
             <th>Turmas</th>
-            <th>Regime</th>
             <th></th>
         </tr>
     </thead>
@@ -23,11 +22,61 @@
                 <td>@uc.Nome</td>
                 <td>@uc.Codigo</td>
                 <td>@uc.Turmas</td>
-                <td>@uc.Regime</td>
-                <td>
-                    <a class="btn-detalhes" href="/UC/EdVee/@uc.Id">EdVee</a>
+                <td style="text-align: right;">
+                    <a class="btn-edvee" href="/UC/EdVee/@uc.Id">EdVee</a>
+                    <a class="btn-edvee" href="/UC/EditUC/@uc.Id">Editar</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<style>
+    .titulo {
+        color: #a60000;
+        margin-bottom: 20px;
+    }
+
+    .btn-nova-uc {
+        background-color: #a60000;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        .btn-nova-uc:hover {
+            background-color: #800000;
+        }
+
+    .tabela-ucs {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+        .tabela-ucs th, .tabela-ucs td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+    .btn-edvee {
+        background-color: #5c788a;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+
+        .btn-edvee:hover {
+            background-color: #3c5a66;
+        }
+
+    .tabela-ucs td:last-child {
+        text-align: right;
+    }
+</style>

@@ -274,5 +274,47 @@ namespace Edveeeeeee.Controllers
             return View(model);
         }
 
+        public IActionResult EditUC(int id)
+        {
+            var uc = _context.UCs.FirstOrDefault(u => u.Id == id);
+            if (uc == null) return NotFound();
+            return View(uc);
+        }
+
+        [HttpPost]
+        public IActionResult EditUC(UnidadeCurricular model)
+        {
+            _context.UCs.Update(model);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUC(int id)
+        {
+            var uc = _context.UCs.FirstOrDefault(u => u.Id == id);
+            if (uc != null)
+            {
+                // Remover os blocos EdVee relacionados
+                var comps = _context.Competencias.Where(c => c.UnidadeCurricularId == id);
+                var conts = _context.Conteudos.Where(c => c.UnidadeCurricularId == id);
+                var ativs = _context.Atividades.Where(a => a.UnidadeCurricularId == id);
+                var avls = _context.Avaliacoes.Where(a => a.UnidadeCurricularId == id);
+
+                _context.Competencias.RemoveRange(comps);
+                _context.Conteudos.RemoveRange(conts);
+                _context.Atividades.RemoveRange(ativs);
+                _context.Avaliacoes.RemoveRange(avls);
+
+                // Remover a UC
+                _context.UCs.Remove(uc);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+
     }
 }

@@ -157,3 +157,17 @@ th {
     .btn-small:hover {
         background-color: #800000;
     }
+
+.btn-edvee {
+    background-color: #5c788a;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+    .btn-edvee:hover {
+        background-color: #3c5a66;
+    }
