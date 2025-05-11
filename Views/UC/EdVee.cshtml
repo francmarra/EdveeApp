@@ -10,169 +10,108 @@
 <div class="edvee-matrix">
     <div class="edvee-row">
         <!-- Competências -->
-        <div class="edvee-box">
+        <div class="edvee-box competencias">
             <h3>Competências</h3>
-            <table class="edvee-table">
-                <tbody>
-                    @foreach (var item in Model.Competencias)
-                    {
-                        <tr>
-                            <td>@item.Texto</td>
-                            <td style="text-align:right;">
-                                <a href="/UC/EditCompetencia/@item.Id" class="btn-editar-inline">Editar</a>
-                                <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div class="edvee-table">
+                @foreach (var c in Model.Competencias)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">@c.Texto</div>
+                        <div class="edvee-cell actions">
+                            <a href="/UC/EditCompetencia/@c.Id">Editar</a> |
+                            <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@c.Id" />
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
             <form asp-action="AddCompetencia" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Nova competência..." class="form-control" />
-                <button type="submit" class="btn-small">+</button>
+                <input type="text" name="texto" placeholder="Nova competência..." />
+                <button type="submit">+</button>
             </form>
         </div>
 
         <!-- Avaliação -->
-        <div class="edvee-box">
+        <div class="edvee-box avaliacoes">
             <h3>Avaliação</h3>
-            <table class="edvee-table">
-                <tbody>
-                    @foreach (var item in Model.Avaliacoes)
-                    {
-                        <tr>
-                            <td>@item.Texto</td>
-                            <td style="text-align:right;">
-                                <a href="/UC/EditAvaliacao/@item.Id" class="btn-editar-inline">Editar</a>
-                                <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div class="edvee-table">
+                @foreach (var a in Model.Avaliacoes)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">@a.Texto</div>
+                        <div class="edvee-cell actions">
+                            <a href="/UC/EditAvaliacao/@a.Id">Editar</a> |
+                            <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@a.Id" />
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
             <form asp-action="AddAvaliacao" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Nova avaliação..." class="form-control" />
-                <button type="submit" class="btn-small">+</button>
+                <input type="text" name="texto" placeholder="Nova avaliação..." />
+                <button type="submit">+</button>
             </form>
         </div>
     </div>
 
     <div class="edvee-row">
         <!-- Conteúdos -->
-        <div class="edvee-box">
+        <div class="edvee-box conteudos">
             <h3>Conteúdos</h3>
-            <table class="edvee-table">
-                <tbody>
-                    @foreach (var item in Model.Conteudos)
-                    {
-                        <tr>
-                            <td>@item.Texto</td>
-                            <td style="text-align:right;">
-                                <a href="/UC/EditConteudo/@item.Id" class="btn-editar-inline">Editar</a>
-                                <form asp-action="DeleteConteudo" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div class="edvee-table">
+                @foreach (var c in Model.Conteudos)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">@c.Texto</div>
+                        <div class="edvee-cell actions">
+                            <a href="/UC/EditConteudo/@c.Id">Editar</a> |
+                            <form asp-action="DeleteConteudo" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@c.Id" />
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
             <form asp-action="AddConteudo" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Novo conteúdo..." class="form-control" />
-                <button type="submit" class="btn-small">+</button>
+                <input type="text" name="texto" placeholder="Novo conteúdo..." />
+                <button type="submit">+</button>
             </form>
         </div>
 
         <!-- Atividades -->
-        <div class="edvee-box">
+        <div class="edvee-box atividades">
             <h3>Atividades</h3>
-            <table class="edvee-table">
-                <tbody>
-                    @foreach (var item in Model.Atividades)
-                    {
-                        <tr>
-                            <td>@item.Texto</td>
-                            <td style="text-align:right;">
-                                <a href="/UC/EditAtividade/@item.Id" class="btn-editar-inline">Editar</a>
-                                <form asp-action="DeleteAtividade" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div class="edvee-table">
+                @foreach (var a in Model.Atividades)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">@a.Texto</div>
+                        <div class="edvee-cell actions">
+                            <a href="/UC/EditAtividade/@a.Id">Editar</a> |
+                            <form asp-action="DeleteAtividade" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@a.Id" />
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
             <form asp-action="AddAtividade" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Nova atividade..." class="form-control" />
-                <button type="submit" class="btn-small">+</button>
+                <input type="text" name="texto" placeholder="Nova atividade..." />
+                <button type="submit">+</button>
             </form>
         </div>
     </div>
 </div>
-
-<hr />
-<h3>Ligações criadas</h3>
-
-@if (!Model.Ligacoes.Any())
-{
-    <p style="color: #666;">Nenhuma ligação foi criada ainda.</p>
-}
-else
-{
-    <table class="ligacoes-tabela">
-        <thead>
-            <tr>
-                <th>Origem</th>
-                <th>→</th>
-                <th>Destino</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var lig in Model.Ligacoes)
-            {
-                string origemTexto = "";
-                string destinoTexto = "";
-
-                switch (lig.OrigemTipo)
-                {
-                    case "Competencia":
-                        origemTexto = Model.Competencias.FirstOrDefault(c => c.Id == lig.OrigemId)?.Texto ?? "??";
-                        break;
-                    case "Conteudo":
-                        origemTexto = Model.Conteudos.FirstOrDefault(c => c.Id == lig.OrigemId)?.Texto ?? "??";
-                        break;
-                }
-
-                switch (lig.DestinoTipo)
-                {
-                    case "Atividade":
-                        destinoTexto = Model.Atividades.FirstOrDefault(a => a.Id == lig.DestinoId)?.Texto ?? "??";
-                        break;
-                    case "Avaliacao":
-                        destinoTexto = Model.Avaliacoes.FirstOrDefault(a => a.Id == lig.DestinoId)?.Texto ?? "??";
-                        break;
-                }
-
-                <tr>
-                    <td>@lig.OrigemTipo: @origemTexto</td>
-                    <td>→</td>
-                    <td>@lig.DestinoTipo: @destinoTexto</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
 
 <style>
     .edvee-matrix {
@@ -186,92 +125,74 @@ else
         display: flex;
         gap: 30px;
         justify-content: space-between;
+        flex-wrap: wrap;
     }
 
     .edvee-box {
         flex: 1;
         background-color: white;
-        padding: 15px;
+        padding: 0;
         border-radius: 8px;
         box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
-        .edvee-box.competencias {
+        .edvee-box h3 {
+            margin: 0;
+            padding: 10px 15px;
+            font-size: 18px;
+            background-color: inherit;
+        }
+
+        .edvee-box.competencias h3 {
             background-color: #f2d4e8;
         }
 
-        .edvee-box.avaliacoes {
+        .edvee-box.avaliacoes h3 {
             background-color: #d8eaf7;
         }
 
-        .edvee-box.conteudos {
+        .edvee-box.conteudos h3 {
             background-color: #fff3c4;
         }
 
-        .edvee-box.atividades {
+        .edvee-box.atividades h3 {
             background-color: #daf5dc;
         }
 
     .edvee-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid #ccc;
+        margin: 10px 15px;
     }
 
-        .edvee-table td {
-            padding: 6px 10px;
+        .edvee-table .edvee-row {
+            display: flex;
             border-bottom: 1px solid #ccc;
-            vertical-align: middle;
+            padding: 6px 0;
+            align-items: center;
         }
 
-    .form-control {
-        width: calc(100% - 40px);
-        padding: 6px;
-        margin-top: 8px;
-        margin-bottom: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+    .edvee-cell {
+        flex: 1;
+        padding: 0 10px;
     }
 
-    .btn-editar-inline,
-    .btn-apagar-inline {
-        background: none;
-        border: none;
-        color: #a60000;
-        cursor: pointer;
-        font-size: 14px;
-        margin-left: 10px;
-        text-decoration: underline;
-    }
-
-        .btn-editar-inline:hover,
-        .btn-apagar-inline:hover {
-            color: #800000;
+        .edvee-cell.actions {
+            flex: none;
+            white-space: nowrap;
         }
 
-    .btn-small {
-        background-color: #a60000;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-        .btn-small:hover {
-            background-color: #800000;
+        .edvee-cell button {
+            background: none;
+            border: none;
+            color: #a00;
+            cursor: pointer;
         }
 
-    .ligacoes-tabela {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-        .ligacoes-tabela th,
-        .ligacoes-tabela td {
-            border-bottom: 1px solid #ccc;
-            padding: 8px 10px;
+        .edvee-cell a {
+            color: #004488;
+            text-decoration: underline;
         }
 </style>
