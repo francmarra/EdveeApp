@@ -1,0 +1,13 @@
+﻿@model Edveeeeeee.Models.Atividade
+
+<h2>Editar Atividade</h2>
+
+<form asp-action="EditAtividade" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UnidadeCurricularId" />
+
+    <label>Texto:</label>
+    <input asp-for="Texto" class="form-control" required />
+
+    <button type="submit" class="btn-detalhes">Guardar</button>
+</form>

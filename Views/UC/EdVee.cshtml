@@ -2,7 +2,14 @@
 
 <h2>EdVee: @Model.UnidadeCurricular.Nome</h2>
 
-<div class="edvee-matrix">
+@if (!string.IsNullOrWhiteSpace(Model.UnidadeCurricular.Descricao))
+{
+    <p style="margin-top: -10px; color: #333;">
+        <em>@Model.UnidadeCurricular.Descricao</em>
+    </p>
+}
+
+<div class="edvee-table">
     <div class="edvee-row">
         <div class="edvee-box">@* Competências *@
             <h3>Competências</h3>
@@ -31,7 +38,14 @@
             <ul>
                 @foreach (var item in Model.Avaliacoes)
                 {
-                    <li>@item.Texto</li>
+                    <li>
+                        @item.Texto
+                        <a href="/UC/EditAvaliacao/@item.Id" class="btn-editar-inline">Editar</a>
+                        <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta avaliação?');">Eliminar</button>
+                        </form>
+                    </li>
                 }
             </ul>
             <form asp-action="AddAvaliacao" method="post">
@@ -48,7 +62,14 @@
             <ul>
                 @foreach (var item in Model.Conteudos)
                 {
-                    <li>@item.Texto</li>
+                    <li>
+                        @item.Texto
+                        <a href="/UC/EditConteudo/@item.Id" class="btn-editar-inline">Editar</a>
+                        <form asp-action="DeleteConteudo" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar este conteúdo?');">Eliminar</button>
+                        </form>
+                    </li>
                 }
             </ul>
             <form asp-action="AddConteudo" method="post">
@@ -63,7 +84,14 @@
             <ul>
                 @foreach (var item in Model.Atividades)
                 {
-                    <li>@item.Texto</li>
+                    <li>
+                        @item.Texto
+                        <a href="/UC/EditAtividade/@item.Id" class="btn-editar-inline">Editar</a>
+                        <form asp-action="DeleteAtividade" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta atividade?');">Eliminar</button>
+                        </form>
+                    </li>
                 }
             </ul>
             <form asp-action="AddAtividade" method="post">

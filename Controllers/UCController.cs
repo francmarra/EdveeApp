@@ -120,6 +120,35 @@ namespace Edveeeeeee.Controllers
             return RedirectToAction("EdVee", new { id = ucId });
         }
 
+        public IActionResult EditConteudo(int id)
+        {
+            var conteudo = _context.Conteudos.FirstOrDefault(c => c.Id == id);
+            if (conteudo == null) return NotFound();
+            return View(conteudo);
+        }
+
+        [HttpPost]
+        public IActionResult EditConteudo(Conteudo model)
+        {
+            _context.Conteudos.Update(model);
+            _context.SaveChanges();
+            return RedirectToAction("EdVee", new { id = model.UnidadeCurricularId });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConteudo(int id)
+        {
+            var conteudo = _context.Conteudos.FirstOrDefault(c => c.Id == id);
+            if (conteudo != null)
+            {
+                int ucId = conteudo.UnidadeCurricularId;
+                _context.Conteudos.Remove(conteudo);
+                _context.SaveChanges();
+                return RedirectToAction("EdVee", new { id = ucId });
+            }
+            return NotFound();
+        }
+
         [HttpPost]
         public IActionResult AddAtividade(int ucId, string texto)
         {
@@ -136,6 +165,35 @@ namespace Edveeeeeee.Controllers
             return RedirectToAction("EdVee", new { id = ucId });
         }
 
+        public IActionResult EditAtividade(int id)
+        {
+            var atividade = _context.Atividades.FirstOrDefault(a => a.Id == id);
+            if (atividade == null) return NotFound();
+            return View(atividade);
+        }
+
+        [HttpPost]
+        public IActionResult EditAtividade(Atividade model)
+        {
+            _context.Atividades.Update(model);
+            _context.SaveChanges();
+            return RedirectToAction("EdVee", new { id = model.UnidadeCurricularId });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAtividade(int id)
+        {
+            var atividade = _context.Atividades.FirstOrDefault(a => a.Id == id);
+            if (atividade != null)
+            {
+                int ucId = atividade.UnidadeCurricularId;
+                _context.Atividades.Remove(atividade);
+                _context.SaveChanges();
+                return RedirectToAction("EdVee", new { id = ucId });
+            }
+            return NotFound();
+        }
+
         [HttpPost]
         public IActionResult AddAvaliacao(int ucId, string texto)
         {
@@ -150,6 +208,35 @@ namespace Edveeeeeee.Controllers
             }
 
             return RedirectToAction("EdVee", new { id = ucId });
+        }
+
+        public IActionResult EditAvaliacao(int id)
+        {
+            var avaliacao = _context.Avaliacoes.FirstOrDefault(a => a.Id == id);
+            if (avaliacao == null) return NotFound();
+            return View(avaliacao);
+        }
+
+        [HttpPost]
+        public IActionResult EditAvaliacao(Avaliacao model)
+        {
+            _context.Avaliacoes.Update(model);
+            _context.SaveChanges();
+            return RedirectToAction("EdVee", new { id = model.UnidadeCurricularId });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAvaliacao(int id)
+        {
+            var avaliacao = _context.Avaliacoes.FirstOrDefault(a => a.Id == id);
+            if (avaliacao != null)
+            {
+                int ucId = avaliacao.UnidadeCurricularId;
+                _context.Avaliacoes.Remove(avaliacao);
+                _context.SaveChanges();
+                return RedirectToAction("EdVee", new { id = ucId });
+            }
+            return NotFound();
         }
 
 
