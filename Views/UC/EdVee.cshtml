@@ -4,9 +4,7 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.UnidadeCurricular.Descricao))
 {
-    <p style="margin-top: -10px; color: #333;">
-        <em>@Model.UnidadeCurricular.Descricao</em>
-    </p>
+    <p><em>@Model.UnidadeCurricular.Descricao</em></p>
 }
 
 <div class="edvee-matrix">
@@ -24,14 +22,13 @@
                                 <a href="/UC/EditCompetencia/@item.Id" class="btn-editar-inline">Editar</a>
                                 <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta competência?');">Eliminar</button>
+                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-
             <form asp-action="AddCompetencia" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova competência..." class="form-control" />
@@ -52,14 +49,13 @@
                                 <a href="/UC/EditAvaliacao/@item.Id" class="btn-editar-inline">Editar</a>
                                 <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta avaliação?');">Eliminar</button>
+                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-
             <form asp-action="AddAvaliacao" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova avaliação..." class="form-control" />
@@ -82,14 +78,13 @@
                                 <a href="/UC/EditConteudo/@item.Id" class="btn-editar-inline">Editar</a>
                                 <form asp-action="DeleteConteudo" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar este conteúdo?');">Eliminar</button>
+                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-
             <form asp-action="AddConteudo" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Novo conteúdo..." class="form-control" />
@@ -110,14 +105,13 @@
                                 <a href="/UC/EditAtividade/@item.Id" class="btn-editar-inline">Editar</a>
                                 <form asp-action="DeleteAtividade" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-apagar-inline" onclick="return confirm('Eliminar esta atividade?');">Eliminar</button>
+                                    <button type="submit" class="btn-apagar-inline">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-
             <form asp-action="AddAtividade" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova atividade..." class="form-control" />
@@ -126,6 +120,59 @@
         </div>
     </div>
 </div>
+
+<hr />
+<h3>Ligações criadas</h3>
+
+@if (!Model.Ligacoes.Any())
+{
+    <p style="color: #666;">Nenhuma ligação foi criada ainda.</p>
+}
+else
+{
+    <table class="ligacoes-tabela">
+        <thead>
+            <tr>
+                <th>Origem</th>
+                <th>→</th>
+                <th>Destino</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lig in Model.Ligacoes)
+            {
+                string origemTexto = "";
+                string destinoTexto = "";
+
+                switch (lig.OrigemTipo)
+                {
+                    case "Competencia":
+                        origemTexto = Model.Competencias.FirstOrDefault(c => c.Id == lig.OrigemId)?.Texto ?? "??";
+                        break;
+                    case "Conteudo":
+                        origemTexto = Model.Conteudos.FirstOrDefault(c => c.Id == lig.OrigemId)?.Texto ?? "??";
+                        break;
+                }
+
+                switch (lig.DestinoTipo)
+                {
+                    case "Atividade":
+                        destinoTexto = Model.Atividades.FirstOrDefault(a => a.Id == lig.DestinoId)?.Texto ?? "??";
+                        break;
+                    case "Avaliacao":
+                        destinoTexto = Model.Avaliacoes.FirstOrDefault(a => a.Id == lig.DestinoId)?.Texto ?? "??";
+                        break;
+                }
+
+                <tr>
+                    <td>@lig.OrigemTipo: @origemTexto</td>
+                    <td>→</td>
+                    <td>@lig.DestinoTipo: @destinoTexto</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 <style>
     .edvee-matrix {
@@ -149,11 +196,20 @@
         box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     }
 
-        .edvee-box h3 {
-            color: #a60000;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-            margin-top: 0;
+        .edvee-box.competencias {
+            background-color: #f2d4e8;
+        }
+
+        .edvee-box.avaliacoes {
+            background-color: #d8eaf7;
+        }
+
+        .edvee-box.conteudos {
+            background-color: #fff3c4;
+        }
+
+        .edvee-box.atividades {
+            background-color: #daf5dc;
         }
 
     .edvee-table {
@@ -167,6 +223,15 @@
             border-bottom: 1px solid #ccc;
             vertical-align: middle;
         }
+
+    .form-control {
+        width: calc(100% - 40px);
+        padding: 6px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
 
     .btn-editar-inline,
     .btn-apagar-inline {
@@ -188,14 +253,25 @@
         background-color: #a60000;
         color: white;
         border: none;
-        padding: 5px 10px;
+        padding: 6px 12px;
         border-radius: 4px;
         font-weight: bold;
         cursor: pointer;
-        margin-top: 5px;
     }
 
         .btn-small:hover {
             background-color: #800000;
+        }
+
+    .ligacoes-tabela {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .ligacoes-tabela th,
+        .ligacoes-tabela td {
+            border-bottom: 1px solid #ccc;
+            padding: 8px 10px;
         }
 </style>

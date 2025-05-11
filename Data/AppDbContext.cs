@@ -16,5 +16,7 @@ namespace Edveeeeeee.Data
         public DbSet<Atividade> Atividades { get; set; }
         public DbSet<Avaliacao> Avaliacoes { get; set; }
 
+        public DbSet<LigacaoEdVee> Ligacoes { get; set; }
+
     }
 }

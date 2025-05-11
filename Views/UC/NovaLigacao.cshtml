@@ -1,0 +1,76 @@
+﻿@model Edveeeeeee.Models.ViewModels.NovaLigacaoViewModel
+
+<h2>Criar Ligação EdVee</h2>
+
+<form asp-action="NovaLigacao" method="post">
+    <input type="hidden" name="UnidadeCurricularId" value="@Model.UnidadeCurricularId" />
+
+    <div>
+        <label>Origem:</label>
+        <select name="OrigemTipo" id="origemTipo" onchange="atualizarOrigem()">
+            <option value="Competencia">Competência</option>
+            <option value="Conteudo">Conteúdo</option>
+        </select>
+        <select name="OrigemId" id="origemSelect">
+            @foreach (var c in Model.Competencias)
+            {
+                <option value="@c.Id">@c.Texto</option>
+            }
+        </select>
+    </div>
+
+    <div style="margin-top:20px;">
+        <label>Destino:</label>
+        <select name="DestinoTipo" id="destinoTipo" onchange="atualizarDestino()">
+            <option value="Avaliacao">Avaliação</option>
+            <option value="Atividade">Atividade</option>
+        </select>
+        <select name="DestinoId" id="destinoSelect">
+            @foreach (var a in Model.Avaliacoes)
+            {
+                <option value="@a.Id">@a.Texto</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn-detalhes" style="margin-top:20px;">Criar Ligação</button>
+</form>
+
+<a href="/UC/EdVee/@Model.UnidadeCurricularId" style="margin-top: 20px; display:block;">← Voltar</a>
+
+@section Scripts {
+    <script>
+        var competencias = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Competencias));
+        var conteudos = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Conteudos));
+        var avaliacoes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Avaliacoes));
+        var atividades = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Atividades));
+
+        function atualizarOrigem() {
+            var tipo = document.getElementById("origemTipo").value;
+            var select = document.getElementById("origemSelect");
+            select.innerHTML = "";
+
+            var lista = tipo === "Conteudo" ? conteudos : competencias;
+            lista.forEach(function (el) {
+                var opt = document.createElement("option");
+                opt.value = el.id;
+                opt.innerText = el.texto;
+                select.appendChild(opt);
+            });
+        }
+
+        function atualizarDestino() {
+            var tipo = document.getElementById("destinoTipo").value;
+            var select = document.getElementById("destinoSelect");
+            select.innerHTML = "";
+
+            var lista = tipo === "Atividade" ? atividades : avaliacoes;
+            lista.forEach(function (el) {
+                var opt = document.createElement("option");
+                opt.value = el.id;
+                opt.innerText = el.texto;
+                select.appendChild(opt);
+            });
+        }
+    </script>
+}

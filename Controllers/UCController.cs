@@ -265,14 +265,26 @@ namespace Edveeeeeee.Controllers
             var model = new EdVeeViewModel
             {
                 UnidadeCurricular = uc,
-                Competencias = _context.Competencias.Where(c => c.UnidadeCurricularId == id).ToList(),
-                Conteudos = _context.Conteudos.Where(c => c.UnidadeCurricularId == id).ToList(),
-                Atividades = _context.Atividades.Where(a => a.UnidadeCurricularId == id).ToList(),
-                Avaliacoes = _context.Avaliacoes.Where(a => a.UnidadeCurricularId == id).ToList()
+                Competencias = _context.Competencias
+                    .Where(c => c.UnidadeCurricularId == id).ToList(),
+
+                Conteudos = _context.Conteudos
+                    .Where(c => c.UnidadeCurricularId == id).ToList(),
+
+                Atividades = _context.Atividades
+                    .Where(a => a.UnidadeCurricularId == id).ToList(),
+
+                Avaliacoes = _context.Avaliacoes
+                    .Where(a => a.UnidadeCurricularId == id).ToList(),
+
+                Ligacoes = _context.Ligacoes
+                    .Where(l => l.UnidadeCurricularId == id).ToList()
             };
 
             return View(model);
         }
+
+
 
         public IActionResult EditUC(int id)
         {
@@ -312,6 +324,39 @@ namespace Edveeeeeee.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult NovaLigacao(int id)
+        {
+            var model = new NovaLigacaoViewModel
+            {
+                UnidadeCurricularId = id,
+                Competencias = _context.Competencias.Where(c => c.UnidadeCurricularId == id).ToList(),
+                Conteudos = _context.Conteudos.Where(c => c.UnidadeCurricularId == id).ToList(),
+                Atividades = _context.Atividades.Where(a => a.UnidadeCurricularId == id).ToList(),
+                Avaliacoes = _context.Avaliacoes.Where(a => a.UnidadeCurricularId == id).ToList()
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public IActionResult NovaLigacao(NovaLigacaoViewModel model)
+        {
+            var ligacao = new LigacaoEdVee
+            {
+                UnidadeCurricularId = model.UnidadeCurricularId,
+                OrigemTipo = model.OrigemTipo,
+                OrigemId = model.OrigemId,
+                DestinoTipo = model.DestinoTipo,
+                DestinoId = model.DestinoId
+            };
+
+            _context.Ligacoes.Add(ligacao);
+            _context.SaveChanges();
+
+            return RedirectToAction("EdVee", new { id = model.UnidadeCurricularId });
         }
 
 
