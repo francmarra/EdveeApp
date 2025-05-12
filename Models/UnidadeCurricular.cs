@@ -1,24 +1,30 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edveeeeeee.Models
 {
     public class UnidadeCurricular
     {
-        [Key]
         public int Id { get; set; }
 
+        [Required]
         public string Nome { get; set; }
+
+        [Required]
         public string Codigo { get; set; }
+
+        [Required]
         public string Turmas { get; set; }
-        public string Regime { get; set; }
 
         public string Descricao { get; set; }
-        public string Competencias { get; set; }
-        public string Conteudos { get; set; }
-        public string Atividades { get; set; }
-        public string Avaliacao { get; set; }
+
+        // Relações com componentes EdVee
+        public virtual ICollection<Competencia> Competencias { get; set; } = new List<Competencia>();
+        public virtual ICollection<Conteudo> Conteudos { get; set; } = new List<Conteudo>();
+        public virtual ICollection<Atividade> Atividades { get; set; } = new List<Atividade>();
+        public virtual ICollection<Avaliacao> Avaliacao { get; set; } = new List<Avaliacao>();
 
         public int ProfessorId { get; set; }
-        public Professor Professor { get; set; }
+
     }
 }

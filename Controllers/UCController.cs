@@ -296,8 +296,17 @@ namespace Edveeeeeee.Controllers
         [HttpPost]
         public IActionResult EditUC(UnidadeCurricular model)
         {
-            _context.UCs.Update(model);
+            var uc = _context.UCs.FirstOrDefault(u => u.Id == model.Id);
+            if (uc == null) return NotFound();
+
+            // Atualizar apenas os campos simples
+            uc.Nome = model.Nome;
+            uc.Codigo = model.Codigo;
+            uc.Turmas = model.Turmas;
+            uc.Descricao = model.Descricao;
+
             _context.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
