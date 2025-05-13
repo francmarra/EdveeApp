@@ -18,10 +18,10 @@
                     <div class="edvee-row">
                         <div class="edvee-cell">@c.Texto</div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditCompetencia/@c.Id">Editar</a> |
+                            <a href="/UC/EditCompetencia/@c.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@c.Id" />
-                                <button type="submit">Eliminar</button>
+                                <button type="submit" class="btn-delete">Eliminar</button>
                             </form>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
             <form asp-action="AddCompetencia" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova competência..." />
-                <button type="submit">+</button>
+                <button type="submit" class="btn-add">+</button>
             </form>
         </div>
 
@@ -43,10 +43,10 @@
                     <div class="edvee-row">
                         <div class="edvee-cell">@a.Texto</div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditAvaliacao/@a.Id">Editar</a> |
+                            <a href="/UC/EditAvaliacao/@a.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@a.Id" />
-                                <button type="submit">Eliminar</button>
+                                <button type="submit" class="btn-delete">Eliminar</button>
                             </form>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
             <form asp-action="AddAvaliacao" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova avaliação..." />
-                <button type="submit">+</button>
+                <button type="submit" class="btn-add">+</button>
             </form>
         </div>
     </div>
@@ -70,10 +70,10 @@
                     <div class="edvee-row">
                         <div class="edvee-cell">@c.Texto</div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditConteudo/@c.Id">Editar</a> |
+                            <a href="/UC/EditConteudo/@c.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteConteudo" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@c.Id" />
-                                <button type="submit">Eliminar</button>
+                                <button type="submit" class="btn-delete">Eliminar</button>
                             </form>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
             <form asp-action="AddConteudo" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Novo conteúdo..." />
-                <button type="submit">+</button>
+                <button type="submit" class="btn-add">+</button>
             </form>
         </div>
 
@@ -95,10 +95,10 @@
                     <div class="edvee-row">
                         <div class="edvee-cell">@a.Texto</div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditAtividade/@a.Id">Editar</a> |
+                            <a href="/UC/EditAtividade/@a.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteAtividade" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@a.Id" />
-                                <button type="submit">Eliminar</button>
+                                <button type="submit" class="btn-delete">Eliminar</button>
                             </form>
                         </div>
                     </div>
@@ -107,18 +107,26 @@
             <form asp-action="AddAtividade" method="post">
                 <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
                 <input type="text" name="texto" placeholder="Nova atividade..." />
-                <button type="submit">+</button>
+                <button type="submit" class="btn-add">+</button>
             </form>
         </div>
     </div>
 </div>
 
 <style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f7f7f7;
+    }
+
     .edvee-matrix {
         display: flex;
         flex-direction: column;
         gap: 30px;
         margin-top: 30px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 10px;
     }
 
     .edvee-row {
@@ -130,53 +138,65 @@
 
     .edvee-box {
         flex: 1;
-        background-color: white;
+        background-color: #fff;
         padding: 0;
-        border-radius: 8px;
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        transition: transform 0.3s;
     }
+
+        .edvee-box:hover {
+            transform: scale(1.02);
+        }
 
         .edvee-box h3 {
             margin: 0;
-            padding: 10px 15px;
+            padding: 15px;
             font-size: 18px;
-            background-color: inherit;
+            color: #fff;
         }
 
         .edvee-box.competencias h3 {
-            background-color: #f2d4e8;
+            background-color: #e91e63;
         }
 
         .edvee-box.avaliacoes h3 {
-            background-color: #d8eaf7;
+            background-color: #2196f3;
         }
 
         .edvee-box.conteudos h3 {
-            background-color: #fff3c4;
+            background-color: #ffc107;
+            color: #333;
         }
 
         .edvee-box.atividades h3 {
-            background-color: #daf5dc;
+            background-color: #4caf50;
         }
 
     .edvee-table {
         display: flex;
         flex-direction: column;
-        border-top: 1px solid #ccc;
+        border-top: 1px solid #eee;
         margin: 10px 15px;
     }
 
         .edvee-table .edvee-row {
             display: flex;
-            border-bottom: 1px solid #ccc;
-            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
             align-items: center;
+            transition: background 0.3s;
         }
+
+            .edvee-table .edvee-row:hover {
+                background: #f9f9f9;
+            }
 
     .edvee-cell {
         flex: 1;
         padding: 0 10px;
+        color: #333;
     }
 
         .edvee-cell.actions {
@@ -184,15 +204,67 @@
             white-space: nowrap;
         }
 
-        .edvee-cell button {
-            background: none;
-            border: none;
-            color: #a00;
-            cursor: pointer;
+        .edvee-cell a {
+            transition: color 0.3s;
         }
 
-        .edvee-cell a {
-            color: #004488;
-            text-decoration: underline;
+    /* Button for editing a component */
+    .btn-edit {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-right: 5px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-edit:hover {
+            background-color: #45a049;
+        }
+
+    /* Button for deleting a component */
+    .btn-delete {
+        background-color: #f44336;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn-delete:hover {
+            background-color: #d32f2f;
+        }
+
+    /* Button for adding a new component */
+    .btn-add {
+        background-color: #2196f3;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    }
+
+        .btn-add:hover {
+            background-color: #1976d2;
+        }
+
+    form input[type="text"] {
+        width: calc(100% - 40px);
+        padding: 8px 10px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+    }
+
+        form input[type="text"]:focus {
+            border-color: #004488;
+            outline: none;
         }
 </style>

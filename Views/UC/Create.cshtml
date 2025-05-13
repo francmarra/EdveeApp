@@ -1,35 +1,102 @@
 ﻿@model Edveeeeeee.Models.UnidadeCurricular
 
-<h2>Nova Unidade Curricular</h2>
+<h2 class="form-title">Criar Nova Unidade Curricular</h2>
+<div class="card">
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="Nome">Nome</label>
+            <input type="text" id="Nome" name="Nome" class="form-control" placeholder="Digite o nome" required />
+        </div>
+        <div class="form-group">
+            <label for="Codigo">Código</label>
+            <input type="text" id="Codigo" name="Codigo" class="form-control" placeholder="Digite o código" required />
+        </div>
+        <div class="form-group">
+            <label for="Turmas">Turmas</label>
+            <input type="number" id="Turmas" name="Turmas" class="form-control" placeholder="Número de turmas" required />
+        </div>
+        <div class="form-group">
+            <label for="Descricao">Descrição</label>
+            <textarea id="Descricao" name="Descricao" class="form-control" placeholder="Descrição opcional"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Criar Unidade Curricular</button>
+            <a href="/UC/Index" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
 
-<form asp-action="Create" method="post">
-    <label>Nome:</label>
-    <input asp-for="Nome" class="form-control" required />
+<style>
+    .form-title {
+        text-align: center;
+        color: #a60000;
+        margin-bottom: 20px;
+    }
 
-    <label>Código:</label>
-    <input asp-for="Codigo" class="form-control" required />
+    .card {
+        background: #fff;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-    <label>Turmas:</label>
-    <input asp-for="Turmas" class="form-control" required />
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-    
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-    <label>Descrição:</label>
-    <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+    }
 
-    <h3>EdVee</h3>
+        .form-control:focus {
+            border-color: #004488;
+            outline: none;
+        }
 
-    <label>Competências:</label>
-    <textarea asp-for="Competencias" class="form-control" rows="3" placeholder="Uma por linha"></textarea>
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
 
-    <label>Conteúdos:</label>
-    <textarea asp-for="Conteudos" class="form-control" rows="3" placeholder="Um por linha"></textarea>
+    .btn-submit, .btn-cancel {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-    <label>Atividades:</label>
-    <textarea asp-for="Atividades" class="form-control" rows="3" placeholder="Uma por linha"></textarea>
+    .btn-submit {
+        background-color: #a60000;
+        color: white;
+        transition: background-color 0.3s;
+    }
 
-    <label>Avaliação:</label>
-    <textarea asp-for="Avaliacao" class="form-control" rows="3" placeholder="Um método por linha"></textarea>
+        .btn-submit:hover {
+            background-color: #800000;
+        }
 
-    <button type="submit" class="btn-nova-uc">Criar</button>
-</form>
+    .btn-cancel {
+        background-color: #ccc;
+        color: #333;
+    }
+
+        .btn-cancel:hover {
+            background-color: #aaa;
+        }
+</style>

@@ -1,116 +1,103 @@
 ﻿@model Edveeeeeee.Models.UnidadeCurricular
 
-<h2>Editar Unidade Curricular</h2>
-
-<form asp-action="EditUC" method="post" class="uc-form">
-    <input type="hidden" asp-for="Id" />
-
-    <div class="form-group">
-        <label for="Nome">Nome:</label>
-        <input asp-for="Nome" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Codigo">Código:</label>
-        <input asp-for="Codigo" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Turmas">Turmas:</label>
-        <input asp-for="Turmas" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Descricao">Descrição:</label>
-        <textarea asp-for="Descricao" class="form-control" rows="4"></textarea>
-    </div>
-
-    <button type="submit" class="btn-detalhes">Guardar</button>
-</form>
-
-<hr />
-
-<div id="confirm-box" style="display: none; margin-top: 15px;">
-    <p style="color: #a60000; font-weight: bold;">
-        Tens a certeza que queres eliminar esta unidade curricular e todos os dados associados?
-    </p>
-    <form asp-action="DeleteUC" method="post">
-        <input type="hidden" name="id" value="@Model.Id" />
-        <button type="submit" class="btn-apagar-uc">Confirmar eliminação</button>
-        <button type="button" class="btn-cancelar" onclick="document.getElementById('confirm-box').style.display='none'">Cancelar</button>
+<h2 class="form-title">Editar Unidade Curricular</h2>
+<div class="card">
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label for="Nome">Nome</label>
+            <input type="text" id="Nome" asp-for="Nome" class="form-control" placeholder="Digite o nome" required />
+        </div>
+        <div class="form-group">
+            <label for="Codigo">Código</label>
+            <input type="text" id="Codigo" asp-for="Codigo" class="form-control" placeholder="Digite o código" required />
+        </div>
+        <div class="form-group">
+            <label for="Turmas">Turmas</label>
+            <input type="number" id="Turmas" asp-for="Turmas" class="form-control" placeholder="Número de turmas" required />
+        </div>
+        <div class="form-group">
+            <label for="Descricao">Descrição</label>
+            <textarea id="Descricao" asp-for="Descricao" class="form-control" placeholder="Descrição opcional"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Guardar</button>
+            <a href="/UC/Index" class="btn-cancel">Cancelar</a>
+        </div>
     </form>
 </div>
 
-<button onclick="document.getElementById('confirm-box').style.display='block'" class="btn-apagar-uc">
-    Eliminar Unidade Curricular
-</button>
-
 <style>
-    .uc-form {
-        max-width: 500px;
-        margin-top: 20px;
+    .form-title {
+        text-align: center;
+        color: #a60000;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: #fff;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .form-group {
         margin-bottom: 15px;
     }
 
-    label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-    }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
     .form-control {
         width: 100%;
-        padding: 8px;
-        font-size: 14px;
+        padding: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        transition: border-color 0.3s;
     }
 
-    .btn-detalhes {
-        background-color: #5c788a;
-        color: white;
-        padding: 8px 14px;
-        border: none;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-top: 10px;
-        cursor: pointer;
-    }
-
-        .btn-detalhes:hover {
-            background-color: #3c5a66;
+        .form-control:focus {
+            border-color: #004488;
+            outline: none;
         }
 
-    .btn-apagar-uc {
-        background-color: #8b0000;
-        color: white;
-        padding: 8px 14px;
-        border: none;
-        border-radius: 4px;
-        font-weight: bold;
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-top: 20px;
+    }
+
+    .btn-submit, .btn-cancel {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        text-decoration: none;
         cursor: pointer;
     }
 
-        .btn-apagar-uc:hover {
-            background-color: #5c0000;
+    .btn-submit {
+        background-color: #a60000;
+        color: white;
+        transition: background-color 0.3s;
+    }
+
+        .btn-submit:hover {
+            background-color: #800000;
         }
 
-    .btn-cancelar {
+    .btn-cancel {
         background-color: #ccc;
         color: #333;
-        padding: 8px 14px;
-        border: none;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-left: 10px;
-        cursor: pointer;
     }
 
-        .btn-cancelar:hover {
+        .btn-cancel:hover {
             background-color: #aaa;
         }
 </style>
