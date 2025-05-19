@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Connections";
+    var cells = ViewBag.Cells as List<string>;
+    var connections = ViewBag.Connections as List<List<int>>;
+}
+
+<div class="text-center">
+    <label>
+        <input type="checkbox" id="showAll" checked /> Show All
+    </label>
+    <label for="connectionIndex">Select Connection Index:</label>
+    <select id="connectionIndex">
+        <option value="" disabled selected>Select one</option>
+    </select>
+    <div class="table-container">
+        <div class="table grid-item" id="table1">
+            @foreach (var cell in cells)
+            {
+                <div class="cell" id="cell-1@cell">Cell @cell</div>
+            }
+        </div>
+        <div class="table grid-item" id="table2">
+            @foreach (var cell in cells)
+            {
+                <div class="cell" id="cell-2@cell">Cell @cell</div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- LeaderLine CDN -->
+<script src="https://cdn.jsdelivr.net/npm/leader-line@1.0.7/leader-line.min.js"></script>
+<script>
+    const connections = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(connections ?? new List<List<int>>()));
+    const colors = ["red","blue","green","orange","purple","black","brown","pink"];
+    let currentLines = [];
+
+    function clearLines() {
+        currentLines.forEach(line => line.remove());
+        currentLines = [];
+    }
+
+    function drawConnection(connection, color) {
+        for (let i = 0; i < connection.length - 1; i++) {
+            let start = document.getElementById(`cell-1${connection[i]}`);
+            let end = document.getElementById(`cell-2${connection[i+1]}`);
+            if (start && end) {
+                let line = new LeaderLine(start, end, {
+                    path: 'straight',
+                    endPlug: 'disc',
+                    size: 2,
+                    color: color
+                });
+                currentLines.push(line);
+            }
+        }
+    }
+
+    function drawConnections() {
+        clearLines();
+        const showAll = document.getElementById("showAll").checked;
+        const selectedIndex = document.getElementById("connectionIndex").value;
+
+        if (showAll) {
+            connections.forEach((conn, index) => {
+                const color = colors[index % colors.length];
+                drawConnection(conn, color);
+            });
+        } else if (selectedIndex !== "") {
+            const index = parseInt(selectedIndex);
+            if (connections[index]) {
+                const color = colors[index % colors.length];
+                drawConnection(connections[index], color);
+            }
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById("connectionIndex");
+        connections.forEach((_, index) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = `Connection ${index}`;
+            select.appendChild(option);
+        });
+
+        document.getElementById("showAll").addEventListener('change', (e) => {
+            document.getElementById("connectionIndex").disabled = e.target.checked;
+            drawConnections();
+        });
+
+        document.getElementById("connectionIndex").addEventListener('change', drawConnections);
+
+        drawConnections();
+    });
+</script>
+<style>
+    .table-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 100px 200px;
+        width: 400px;
+        height: auto;
+    }
+    .grid-item {
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        font-size: 24px;
+        gap: 10px;
+    }
+    .cell {
+        width: 100%;
+        padding: 6px 0px;
+        border-bottom: 1px solid black
+    }
+</style>
