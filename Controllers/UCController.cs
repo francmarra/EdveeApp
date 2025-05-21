@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Edveeeeeee.Models;
 using Edveeeeeee.Models.ViewModels;
+using System.Text.Json.Serialization;
 
 namespace Edveeeeeee.Controllers
 {
@@ -330,45 +331,65 @@ namespace Edveeeeeee.Controllers
                 // Remover a UC
                 _context.UCs.Remove(uc);
                 _context.SaveChanges();
-            }
+            }            return RedirectToAction("Index");
+        }        
+        
+        // O método NovaLigacao(int id) foi removido porque agora usamos as ligações interativas na tela principal
+        // O método NovaLigacao foi removido porque agora usamos as ligações interativas na tela principal
+        // O método EdVeeMatriz foi removido porque agora usamos uma única visualização interativa
 
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult NovaLigacao(int id)
+        [HttpGet]
+        public IActionResult GetConnections(int id)
         {
-            var model = new NovaLigacaoViewModel
-            {
-                UnidadeCurricularId = id,
-                Competencias = _context.Competencias.Where(c => c.UnidadeCurricularId == id).ToList(),
-                Conteudos = _context.Conteudos.Where(c => c.UnidadeCurricularId == id).ToList(),
-                Atividades = _context.Atividades.Where(a => a.UnidadeCurricularId == id).ToList(),
-                Avaliacoes = _context.Avaliacoes.Where(a => a.UnidadeCurricularId == id).ToList()
-            };
-
-            return View(model);
+            var userId = HttpContext.Session.GetInt32("userId");
+            if (userId == null) return Unauthorized();
+            
+            // Busca todas as ligações da UC específica
+            var ligacoes = _context.Ligacoes
+                .Where(l => l.UnidadeCurricularId == id)
+                .Select(l => new {
+                    origemTipo = l.OrigemTipo,
+                    origemId = l.OrigemId,
+                    destinoTipo = l.DestinoTipo,
+                    destinoId = l.DestinoId
+                })
+                .ToList();
+            
+            return Json(ligacoes);
         }
-
 
         [HttpPost]
-        public IActionResult NovaLigacao(NovaLigacaoViewModel model)
+        public IActionResult SaveConnections([FromBody] SaveConnectionsViewModel model)
         {
-            var ligacao = new LigacaoEdVee
+            var userId = HttpContext.Session.GetInt32("userId");
+            if (userId == null) return Unauthorized();
+            
+            // Verifica se a UC pertence ao professor atual
+            var uc = _context.UCs.FirstOrDefault(u => u.Id == model.ucId && u.ProfessorId == userId);
+            if (uc == null) return NotFound();
+            
+            // Remove todas as ligações existentes para esta UC
+            var existingConnections = _context.Ligacoes.Where(l => l.UnidadeCurricularId == model.ucId);
+            _context.Ligacoes.RemoveRange(existingConnections);
+            
+            // Adiciona as novas ligações
+            if (model.connections != null && model.connections.Any())
             {
-                UnidadeCurricularId = model.UnidadeCurricularId,
-                OrigemTipo = model.OrigemTipo,
-                OrigemId = model.OrigemId,
-                DestinoTipo = model.DestinoTipo,
-                DestinoId = model.DestinoId
-            };
-
-            _context.Ligacoes.Add(ligacao);
+                foreach (var conn in model.connections)
+                {
+                    _context.Ligacoes.Add(new LigacaoEdVee {
+                        UnidadeCurricularId = model.ucId,
+                        OrigemTipo = conn.origemTipo,
+                        OrigemId = Convert.ToInt32(conn.origemId),
+                        DestinoTipo = conn.destinoTipo,
+                        DestinoId = Convert.ToInt32(conn.destinoId)
+                    });
+                }
+            }
+            
             _context.SaveChanges();
-
-            return RedirectToAction("EdVee", new { id = model.UnidadeCurricularId });
+            
+            return Ok(new { success = true });
         }
-
-
-
     }
 }

@@ -10,102 +10,219 @@
 <!-- Connections Section Start -->
 <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
     <h4>Conexões Entre Secções</h4>
-    <label>
-        <input type="checkbox" id="showAll" checked /> Mostrar todas
-    </label>
-    <label for="connectionIndex">Escolher ligação:</label>
-    <select id="connectionIndex">
-        <option value="" disabled selected>Escolha uma</option>
-    </select>
-    <div class="connection-grid-container" style="display: flex; justify-content: space-around; align-items: flex-start; margin-top: 20px;">
-        <div>
-            <div class="conn-cell" id="cell-1" style="background:#d81b60;color:white;padding:10px;border-radius:4px;margin-bottom:20px;">Competências</div>
-            <div class="conn-cell" id="cell-2" style="background:#fbc02d;color:white;padding:10px;border-radius:4px;">Conteúdos</div>
-        </div>
-        <div>
-            <div class="conn-cell" id="cell-3" style="background:#1976d2;color:white;padding:10px;border-radius:4px;margin-bottom:20px;">Avaliação</div>
-            <div class="conn-cell" id="cell-4" style="background:#388e3c;color:white;padding:10px;border-radius:4px;">Atividades</div>
-        </div>
+    <div class="connection-controls">
+        <button id="toggleConnectionMode" class="btn-connection-mode">Modo de Conexão: DESLIGADO</button>
+        <button id="clearConnections" class="btn-clear-connections">Limpar Conexões</button>
+        <button id="saveConnections" class="btn-save-connections">Salvar Conexões</button>
+    </div>
+    <div class="connection-instructions" style="display:none; margin-top: 10px;">
+        <p>Para criar uma ligação: <b>Clique</b> em um elemento e depois <b>clique</b> em outro elemento para ligar.</p>
     </div>
 </div>
 
 <!-- LeaderLine CDN -->
 <script src="https://cdn.jsdelivr.net/npm/leader-line@1.0.7/leader-line.min.js"></script>
 <script>
-    // Example: connection indices are arrays of pairs [from, to]
-    // 1: Competências, 2: Conteúdos, 3: Avaliação, 4: Atividades
-    // Example connections (customize as needed)
-    const connections = [
-        [[1,3], [2,4]],   // Connection 0: Competências→Avaliação, Conteúdos→Atividades
-        [[1,2], [3,4]],   // Connection 1: Competências→Conteúdos, Avaliação→Atividades
-        [[2,3]],          // Connection 2: Conteúdos→Avaliação
-    ];
-    const colors = ["#d81b60","#1976d2","#fbc02d","#388e3c","purple","orange"];
-    let currentLines = [];
-
-    function clearLines() {
-        currentLines.forEach(line => line.remove());
-        currentLines = [];
-    }
-
-    function drawConnection(pairs, color) {
-        pairs.forEach(([from, to]) => {
-            let start = document.getElementById(`cell-${from}`);
-            let end = document.getElementById(`cell-${to}`);
-            if (start && end) {
-                let line = new LeaderLine(start, end, {
-                    path: 'straight',
-                    endPlug: 'disc',
-                    size: 3,
-                    color: color,
-                    startPlugColor: color,
-                    endPlugColor: color
-                });
-                currentLines.push(line);
+    // Variáveis para controle de ligações
+    let connectionMode = false;
+    let selectedElement = null;
+    let lines = [];
+    let currentConnections = [];
+    
+    // Função para recuperar as ligações existentes do servidor
+    async function loadConnections() {
+        try {
+            const response = await fetch('/UC/GetConnections/@Model.UnidadeCurricular.Id');
+            if (response.ok) {
+                const connections = await response.json();
+                renderConnections(connections);
             }
-        });
-    }
-
-    function drawConnections() {
-        clearLines();
-        const showAll = document.getElementById("showAll").checked;
-        const selectedIndex = document.getElementById("connectionIndex").value;
-
-        if (showAll) {
-            connections.forEach((conn, index) => {
-                const color = colors[index % colors.length];
-                drawConnection(conn, color);
-            });
-        } else if (selectedIndex !== "") {
-            const index = parseInt(selectedIndex);
-            if (connections[index]) {
-                const color = colors[index % colors.length];
-                drawConnection(connections[index], color);
-            }
+        } catch (error) {
+            console.error('Erro ao carregar conexões:', error);
         }
     }
-
+    
+    // Função para salvar as conexões criadas
+    async function saveConnections() {
+        try {
+            const response = await fetch('/UC/SaveConnections', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ucId: @Model.UnidadeCurricular.Id,
+                    connections: currentConnections
+                })
+            });
+            
+            if (response.ok) {
+                alert('Conexões salvas com sucesso!');
+            } else {
+                alert('Erro ao salvar conexões.');
+            }
+        } catch (error) {
+            console.error('Erro ao salvar conexões:', error);
+            alert('Erro ao salvar as conexões.');
+        }
+    }
+    
+    // Função para desenhar as ligações na tela
+    function renderConnections(connections) {
+        // Limpa as linhas existentes
+        clearLines();
+        
+        // Para cada conexão, cria uma linha
+        connections.forEach(conn => {
+            const origem = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
+            const destino = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
+            
+            if (origem && destino) {
+                const line = new LeaderLine(
+                    origem,
+                    destino,
+                    {
+                        path: 'straight',
+                        endPlug: 'arrow1',
+                        size: 2,
+                        color: '#0066cc',
+                        startSocketGravity: 25,
+                        endSocketGravity: 25
+                    }
+                );
+                lines.push(line);
+                
+                // Adiciona a conexão à lista atual
+                currentConnections.push({
+                    origemTipo: conn.origemTipo,
+                    origemId: conn.origemId,
+                    destinoTipo: conn.destinoTipo,
+                    destinoId: conn.destinoId
+                });
+            }
+        });
+    }
+    
+    // Função para limpar todas as linhas
+    function clearLines() {
+        lines.forEach(line => line.remove());
+        lines = [];
+        currentConnections = [];
+    }
+    
+    // Função para ativar/desativar o modo de conexão
+    function toggleConnectionMode() {
+        connectionMode = !connectionMode;
+        const button = document.getElementById('toggleConnectionMode');
+        const instructions = document.querySelector('.connection-instructions');
+        
+        if (connectionMode) {
+            button.textContent = 'Modo de Conexão: LIGADO';
+            button.classList.add('active');
+            instructions.style.display = 'block';
+            
+            // Adiciona classe de destaque aos elementos
+            document.querySelectorAll('.connectable').forEach(el => {
+                el.classList.add('connection-mode');
+            });
+        } else {
+            button.textContent = 'Modo de Conexão: DESLIGADO';
+            button.classList.remove('active');
+            instructions.style.display = 'none';
+            selectedElement = null;
+            
+            // Remove classe de destaque
+            document.querySelectorAll('.connectable').forEach(el => {
+                el.classList.remove('connection-mode');
+                el.classList.remove('selected-element');
+            });
+        }
+    }
+    
+    // Manipulador de clique para selecionar elementos
+    function handleElementClick(e) {
+        if (!connectionMode) return;
+        
+        const element = e.currentTarget;
+        
+        if (!selectedElement) {
+            // Primeira seleção
+            selectedElement = element;
+            element.classList.add('selected-element');
+        } else if (selectedElement === element) {
+            // Clicou no mesmo elemento - deseleciona
+            selectedElement.classList.remove('selected-element');
+            selectedElement = null;
+        } else {
+            // Segunda seleção - cria a conexão
+            const origem = selectedElement;
+            const destino = element;
+            
+            const [origemTipo, origemId] = origem.dataset.id.split('-');
+            const [destinoTipo, destinoId] = destino.dataset.id.split('-');
+            
+            // Verifica se a conexão já existe
+            const existingConnection = currentConnections.find(
+                conn => conn.origemId == origemId && 
+                       conn.origemTipo === origemTipo &&
+                       conn.destinoId == destinoId &&
+                       conn.destinoTipo === destinoTipo
+            );
+            
+            if (!existingConnection) {
+                // Cria a linha visual
+                const line = new LeaderLine(
+                    origem,
+                    destino,
+                    {
+                        path: 'straight',
+                        endPlug: 'arrow1',
+                        size: 2,
+                        color: '#0066cc',
+                        startSocketGravity: 25,
+                        endSocketGravity: 25
+                    }
+                );
+                lines.push(line);
+                
+                // Adiciona à lista de conexões
+                currentConnections.push({
+                    origemTipo: origemTipo,
+                    origemId: origemId,
+                    destinoTipo: destinoTipo,
+                    destinoId: destinoId
+                });
+            }
+            
+            // Limpa a seleção
+            selectedElement.classList.remove('selected-element');
+            selectedElement = null;
+        }
+    }
+    
+    // Inicialização
     window.addEventListener('DOMContentLoaded', () => {
-        const select = document.getElementById("connectionIndex");
-        connections.forEach((_, index) => {
-            const option = document.createElement("option");
-            option.value = index;
-            option.textContent = `Ligação ${index+1}`;
-            select.appendChild(option);
+        // Carrega conexões existentes
+        loadConnections();
+        
+        // Configura handlers dos botões
+        document.getElementById('toggleConnectionMode').addEventListener('click', toggleConnectionMode);
+        document.getElementById('clearConnections').addEventListener('click', clearLines);
+        document.getElementById('saveConnections').addEventListener('click', saveConnections);
+        
+        // Adiciona handler de clique a todos os elementos conectáveis
+        document.querySelectorAll('.connectable').forEach(el => {
+            el.addEventListener('click', handleElementClick);
         });
-
-        document.getElementById("showAll").addEventListener('change', (e) => {
-            document.getElementById("connectionIndex").disabled = e.target.checked;
-            drawConnections();
+        
+        // Ajusta as linhas quando a janela é redimensionada
+        window.addEventListener('resize', () => {
+            lines.forEach(line => line.position());
         });
-
-        document.getElementById("connectionIndex").addEventListener('change', drawConnections);
-        drawConnections();
     });
 </script>
 
-<div class="edvee-matrix">
-    <div class="edvee-row">
+<div class="edvee-matrix">    <div class="edvee-row">
         <!-- Competências -->
         <div class="edvee-box competencias">
             <h3>Competências</h3>
@@ -113,7 +230,9 @@
                 @foreach (var c in Model.Competencias)
                 {
                     <div class="edvee-row">
-                        <div class="edvee-cell">@c.Texto</div>
+                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Competencia-@c.Id">@c.Texto</div>
+                        </div>
                         <div class="edvee-cell actions">
                             <a href="/UC/EditCompetencia/@c.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
@@ -138,7 +257,9 @@
                 @foreach (var a in Model.Avaliacoes)
                 {
                     <div class="edvee-row">
-                        <div class="edvee-cell">@a.Texto</div>
+                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Avaliacao-@a.Id">@a.Texto</div>
+                        </div>
                         <div class="edvee-cell actions">
                             <a href="/UC/EditAvaliacao/@a.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
@@ -155,9 +276,7 @@
                 <button type="submit" class="btn-add">+</button>
             </form>
         </div>
-    </div>
-
-    <div class="edvee-row">
+    </div>    <div class="edvee-row">
         <!-- Conteúdos -->
         <div class="edvee-box conteudos">
             <h3>Conteúdos</h3>
@@ -165,7 +284,9 @@
                 @foreach (var c in Model.Conteudos)
                 {
                     <div class="edvee-row">
-                        <div class="edvee-cell">@c.Texto</div>
+                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Conteudo-@c.Id">@c.Texto</div>
+                        </div>
                         <div class="edvee-cell actions">
                             <a href="/UC/EditConteudo/@c.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteConteudo" method="post" style="display:inline;">
@@ -190,7 +311,9 @@
                 @foreach (var a in Model.Atividades)
                 {
                     <div class="edvee-row">
-                        <div class="edvee-cell">@a.Texto</div>
+                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Atividade-@a.Id">@a.Texto</div>
+                        </div>
                         <div class="edvee-cell actions">
                             <a href="/UC/EditAtividade/@a.Id" class="btn-edit">Editar</a>
                             <form asp-action="DeleteAtividade" method="post" style="display:inline;">
@@ -214,6 +337,80 @@
     body {
         font-family: "Segoe UI", Arial, sans-serif;
         background: #f7f7f7;
+    }
+    
+    .btn-edvee {
+        background-color: #a60000;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    
+    .btn-matrix {
+        background-color: #0055aa;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    
+    .btn-connection-mode, .btn-clear-connections, .btn-save-connections {
+        background-color: #555;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    
+    .btn-connection-mode.active {
+        background-color: #22aa22;
+    }
+    
+    .btn-clear-connections {
+        background-color: #d32f2f;
+    }
+    
+    .btn-save-connections {
+        background-color: #1976d2;
+    }
+    
+    .connection-controls {
+        display: flex;
+        margin: 15px 0;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .connection-instructions {
+        background-color: #ffd;
+        padding: 10px;
+        border-radius: 4px;
+        border-left: 4px solid #fb1;
+    }
+    
+    .connectable {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .connection-mode {
+        box-shadow: 0 0 0 1px #0066cc;
+        border-radius: 4px;
+    }
+    
+    .connection-mode:hover {
+        background-color: rgba(0, 102, 204, 0.1);
+    }
+    
+    .selected-element {
+        background-color: rgba(0, 102, 204, 0.2) !important;
+        box-shadow: 0 0 0 2px #0066cc !important;
     }
 
     .edvee-matrix {

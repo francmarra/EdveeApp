@@ -46,3 +46,19 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+@RenderBody()
+        </main>
+    }
+    else
+    {
+        <!-- Layout simples para login -->
+        <main>
+            @RenderBody()
+        </main>
+    }
+    
+    @RenderSection("Scripts", required: false)
+</body>
+
+</html>
