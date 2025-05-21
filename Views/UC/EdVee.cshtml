@@ -8,10 +8,10 @@
 }
 
 <!-- Connections Section Start -->
-<div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
+<div style="background: #f8f9fa; border-radius: 10px; padding: 15px; margin-top: 20px;">
     <h4>Conexões Entre Secções</h4>
     <div class="connection-controls">
-        <button id="toggleConnectionMode" class="btn-connection-mode">Modo de Conexão: DESLIGADO</button>
+        <button id="toggleConnectionMode" class="btn-connection-mode inactive">Modo de Conexão: DESLIGADO</button>
         <button id="clearConnections" class="btn-clear-connections">Limpar Conexões</button>
         <button id="saveConnections" class="btn-save-connections">Salvar Conexões</button>
     </div>
@@ -28,13 +28,13 @@
     let selectedElement = null;
     let lines = [];
     let currentConnections = [];
-    
-    // Função para recuperar as ligações existentes do servidor
+      // Função para recuperar as ligações existentes do servidor
     async function loadConnections() {
         try {
             const response = await fetch('/UC/GetConnections/@Model.UnidadeCurricular.Id');
             if (response.ok) {
                 const connections = await response.json();
+                currentConnections = connections; // Armazena as conexões recuperadas
                 renderConnections(connections);
             }
         } catch (error) {
@@ -65,9 +65,7 @@
             console.error('Erro ao salvar conexões:', error);
             alert('Erro ao salvar as conexões.');
         }
-    }
-    
-    // Função para desenhar as ligações na tela
+    }    // Função para desenhar as ligações na tela
     function renderConnections(connections) {
         // Limpa as linhas existentes
         clearLines();
@@ -77,17 +75,28 @@
             const origem = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
             const destino = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
             
-            if (origem && destino) {
+            if (origem && destino) {                
+                // Define a cor da linha baseada nos tipos de origem e destino
+                let lineColor = getLineColor(origem.dataset.section, destino.dataset.section);
+                
+                // Seleciona o elemento de conexão do lado direito do tema de origem
+                const origemPoint = origem.querySelector('.connection-point-right');
+                const destinoPoint = destino.querySelector('.connection-point-left');
+                  // Cria uma linha simples usando os pontos de conexão
                 const line = new LeaderLine(
-                    origem,
-                    destino,
+                    origemPoint || origem,
+                    destinoPoint || destino,
                     {
                         path: 'straight',
-                        endPlug: 'arrow1',
+                        endPlug: 'behind',  // Remove a seta no final
+                        startPlug: 'behind', // Remove a seta no início
                         size: 2,
-                        color: '#0066cc',
-                        startSocketGravity: 25,
-                        endSocketGravity: 25
+                        color: lineColor,
+                        startSocket: 'right',
+                        endSocket: 'left',
+                        startSocketGravity: 100,  // Força a linha a sair horizontalmente
+                        endSocketGravity: 100,    // Força a linha a chegar horizontalmente
+                        dash: {animation: true}   // Adiciona animação à linha (opcional)
                     }
                 );
                 lines.push(line);
@@ -101,16 +110,37 @@
                 });
             }
         });
+    }    // Função para determinar a cor da linha baseada nos tipos de origem e destino
+    function getLineColor(origemSection, destinoSection) {
+        // Cor padrão
+        let color = '#0066cc';
+        
+        // Cores por tipo de seção
+        if ((origemSection === 'Conteudo' && destinoSection === 'Atividade') || 
+            (origemSection === 'Atividade' && destinoSection === 'Conteudo')) {
+            color = '#4caf50'; // Verde para conexões Conteudo-Atividade
+        } else if ((origemSection === 'Competencia' && destinoSection === 'Avaliacao') || 
+                  (origemSection === 'Avaliacao' && destinoSection === 'Competencia')) {
+            color = '#2196f3'; // Azul para conexões Competencia-Avaliacao
+        } else if ((origemSection === 'Competencia' && destinoSection === 'Atividade') || 
+                  (origemSection === 'Atividade' && destinoSection === 'Competencia')) {
+            color = '#e91e63'; // Rosa para conexões Competencia-Atividade
+        } else if ((origemSection === 'Conteudo' && destinoSection === 'Avaliacao') || 
+                  (origemSection === 'Avaliacao' && destinoSection === 'Conteudo')) {
+            color = '#ffc107'; // Amarelo para conexões Conteudo-Avaliacao
+        }
+        
+        return color;
     }
-    
-    // Função para limpar todas as linhas
+      // Função para limpar todas as linhas
     function clearLines() {
         lines.forEach(line => line.remove());
         lines = [];
-        currentConnections = [];
-    }
-    
-    // Função para ativar/desativar o modo de conexão
+        // Mantém as conexões para que possamos restaurá-las ao sair do modo de conexão
+        if (connectionMode) {
+            currentConnections = [];
+        }
+    }      // Função para ativar/desativar o modo de conexão
     function toggleConnectionMode() {
         connectionMode = !connectionMode;
         const button = document.getElementById('toggleConnectionMode');
@@ -119,6 +149,7 @@
         if (connectionMode) {
             button.textContent = 'Modo de Conexão: LIGADO';
             button.classList.add('active');
+            button.classList.remove('inactive');
             instructions.style.display = 'block';
             
             // Adiciona classe de destaque aos elementos
@@ -128,6 +159,7 @@
         } else {
             button.textContent = 'Modo de Conexão: DESLIGADO';
             button.classList.remove('active');
+            button.classList.add('inactive');
             instructions.style.display = 'none';
             selectedElement = null;
             
@@ -136,10 +168,51 @@
                 el.classList.remove('connection-mode');
                 el.classList.remove('selected-element');
             });
+            
+            // Renderiza novamente as conexões existentes para garantir que permaneçam visíveis
+            renderStoredConnections();
         }
     }
     
-    // Manipulador de clique para selecionar elementos
+    // Função para renderizar as conexões armazenadas sem limpar a lista atual
+    function renderStoredConnections() {
+        // Limpa apenas as linhas visuais, mantendo as conexões armazenadas
+        lines.forEach(line => line.remove());
+        lines = [];
+        
+        // Para cada conexão armazenada, cria uma linha visual
+        currentConnections.forEach(conn => {
+            const origem = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
+            const destino = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
+            
+            if (origem && destino) {
+                let lineColor = getLineColor(origem.dataset.section, destino.dataset.section);
+                
+                // Seleciona os pontos de conexão
+                const origemPoint = origem.querySelector('.connection-point-right');
+                const destinoPoint = destino.querySelector('.connection-point-left');
+                  // Cria a linha visual
+                const line = new LeaderLine(
+                    origemPoint || origem,
+                    destinoPoint || destino,
+                    {
+                        path: 'straight',
+                        endPlug: 'behind',  // Remove a seta no final
+                        startPlug: 'behind', // Remove a seta no início
+                        size: 2,
+                        color: lineColor,
+                        startSocket: 'right',
+                        endSocket: 'left',
+                        startSocketGravity: 100,  // Força a linha a sair horizontalmente
+                        endSocketGravity: 100,    // Força a linha a chegar horizontalmente
+                        dash: {animation: true}   // Adiciona animação à linha (opcional)
+                    }
+                );
+                lines.push(line);
+            }
+        });
+    }
+      // Manipulador de clique para selecionar elementos
     function handleElementClick(e) {
         if (!connectionMode) return;
         
@@ -167,20 +240,26 @@
                        conn.origemTipo === origemTipo &&
                        conn.destinoId == destinoId &&
                        conn.destinoTipo === destinoTipo
-            );
-            
-            if (!existingConnection) {
-                // Cria a linha visual
+            );              if (!existingConnection) {                // Define a cor da linha baseada nas seções de origem e destino
+                let lineColor = getLineColor(origem.dataset.section, destino.dataset.section);
+                  
+                // Seleciona o elemento de conexão do lado direito do tema de origem
+                const origemPoint = origem.querySelector('.connection-point-right');
+                const destinoPoint = destino.querySelector('.connection-point-left');
+                
+                // Cria a linha visual simples
                 const line = new LeaderLine(
-                    origem,
-                    destino,
+                    origemPoint || origem,
+                    destinoPoint || destino,
                     {
                         path: 'straight',
                         endPlug: 'arrow1',
                         size: 2,
-                        color: '#0066cc',
-                        startSocketGravity: 25,
-                        endSocketGravity: 25
+                        color: lineColor,
+                        startSocket: 'right',
+                        endSocket: 'left',
+                        startSocketGravity: 80,  // Ajuda a linha a sair mais horizontalmente
+                        endSocketGravity: 80     // Ajuda a linha a chegar mais horizontalmente
                     }
                 );
                 lines.push(line);
@@ -199,15 +278,20 @@
             selectedElement = null;
         }
     }
-    
-    // Inicialização
+      // Inicialização
     window.addEventListener('DOMContentLoaded', () => {
         // Carrega conexões existentes
         loadConnections();
         
         // Configura handlers dos botões
         document.getElementById('toggleConnectionMode').addEventListener('click', toggleConnectionMode);
-        document.getElementById('clearConnections').addEventListener('click', clearLines);
+        document.getElementById('clearConnections').addEventListener('click', () => {
+            clearLines(); // Limpa as linhas e as conexões
+            // Renderiza as conexões novamente se não estiver no modo de conexão
+            if (!connectionMode) {
+                renderStoredConnections();
+            }
+        });
         document.getElementById('saveConnections').addEventListener('click', saveConnections);
         
         // Adiciona handler de clique a todos os elementos conectáveis
@@ -219,6 +303,19 @@
         window.addEventListener('resize', () => {
             lines.forEach(line => line.position());
         });
+        
+        // Adicionar um observer para reagir à rolagem da página ou outras alterações no layout
+        const observer = new MutationObserver(() => {
+            // Reposiciona todas as linhas quando houver mudanças no DOM
+            lines.forEach(line => line.position());
+        });
+        
+        // Observa mudanças no layout
+        observer.observe(document.body, { 
+            childList: true, 
+            subtree: true,
+            attributes: true
+        });
     });
 </script>
 
@@ -226,19 +323,26 @@
         <!-- Competências -->
         <div class="edvee-box competencias">
             <h3>Competências</h3>
-            <div class="edvee-table">
-                @foreach (var c in Model.Competencias)
+            <div class="edvee-table">                @foreach (var c in Model.Competencias)
                 {
-                    <div class="edvee-row">
-                        <div class="edvee-cell">
-                            <div class="connectable" data-id="Competencia-@c.Id">@c.Texto</div>
+                    <div class="edvee-row">                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Competencia-@c.Id" data-section="Competencia">
+                                @c.Texto
+                                <div class="connection-point-left"></div>
+                                <div class="connection-point-right"></div>
+                            </div>
                         </div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditCompetencia/@c.Id" class="btn-edit">Editar</a>
-                            <form asp-action="DeleteCompetencia" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="@c.Id" />
-                                <button type="submit" class="btn-delete">Eliminar</button>
-                            </form>
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditCompetencia/@c.Id">Editar</a>
+                                    <form asp-action="DeleteCompetencia" method="post">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -253,19 +357,26 @@
         <!-- Avaliação -->
         <div class="edvee-box avaliacoes">
             <h3>Avaliação</h3>
-            <div class="edvee-table">
-                @foreach (var a in Model.Avaliacoes)
+            <div class="edvee-table">                @foreach (var a in Model.Avaliacoes)
                 {
-                    <div class="edvee-row">
-                        <div class="edvee-cell">
-                            <div class="connectable" data-id="Avaliacao-@a.Id">@a.Texto</div>
+                    <div class="edvee-row">                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Avaliacao-@a.Id" data-section="Avaliacao">
+                                @a.Texto
+                                <div class="connection-point-left"></div>
+                                <div class="connection-point-right"></div>
+                            </div>
                         </div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditAvaliacao/@a.Id" class="btn-edit">Editar</a>
-                            <form asp-action="DeleteAvaliacao" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="@a.Id" />
-                                <button type="submit" class="btn-delete">Eliminar</button>
-                            </form>
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditAvaliacao/@a.Id">Editar</a>
+                                    <form asp-action="DeleteAvaliacao" method="post">
+                                        <input type="hidden" name="id" value="@a.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -280,19 +391,26 @@
         <!-- Conteúdos -->
         <div class="edvee-box conteudos">
             <h3>Conteúdos</h3>
-            <div class="edvee-table">
-                @foreach (var c in Model.Conteudos)
+            <div class="edvee-table">                @foreach (var c in Model.Conteudos)
                 {
-                    <div class="edvee-row">
-                        <div class="edvee-cell">
-                            <div class="connectable" data-id="Conteudo-@c.Id">@c.Texto</div>
+                    <div class="edvee-row">                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Conteudo-@c.Id" data-section="Conteudo">
+                                @c.Texto
+                                <div class="connection-point-left"></div>
+                                <div class="connection-point-right"></div>
+                            </div>
                         </div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditConteudo/@c.Id" class="btn-edit">Editar</a>
-                            <form asp-action="DeleteConteudo" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="@c.Id" />
-                                <button type="submit" class="btn-delete">Eliminar</button>
-                            </form>
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditConteudo/@c.Id">Editar</a>
+                                    <form asp-action="DeleteConteudo" method="post">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -307,19 +425,26 @@
         <!-- Atividades -->
         <div class="edvee-box atividades">
             <h3>Atividades</h3>
-            <div class="edvee-table">
-                @foreach (var a in Model.Atividades)
+            <div class="edvee-table">                @foreach (var a in Model.Atividades)
                 {
-                    <div class="edvee-row">
-                        <div class="edvee-cell">
-                            <div class="connectable" data-id="Atividade-@a.Id">@a.Texto</div>
+                    <div class="edvee-row">                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Atividade-@a.Id" data-section="Atividade">
+                                @a.Texto
+                                <div class="connection-point-left"></div>
+                                <div class="connection-point-right"></div>
+                            </div>
                         </div>
                         <div class="edvee-cell actions">
-                            <a href="/UC/EditAtividade/@a.Id" class="btn-edit">Editar</a>
-                            <form asp-action="DeleteAtividade" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="@a.Id" />
-                                <button type="submit" class="btn-delete">Eliminar</button>
-                            </form>
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditAtividade/@a.Id">Editar</a>
+                                    <form asp-action="DeleteAtividade" method="post">
+                                        <input type="hidden" name="id" value="@a.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -354,21 +479,31 @@
         padding: 8px 14px;
         border-radius: 4px;
         text-decoration: none;
-    }
-    
-    .btn-connection-mode, .btn-clear-connections, .btn-save-connections {
-        background-color: #555;
-        color: white;
+    }    .btn-connection-mode, .btn-clear-connections, .btn-save-connections {
         padding: 8px 14px;
         border-radius: 4px;
         border: none;
         cursor: pointer;
         margin-right: 10px;
         font-weight: bold;
+        color: white;
+    }
+    
+    .btn-connection-mode {
+        background-color: #22aa22;
     }
     
     .btn-connection-mode.active {
         background-color: #22aa22;
+    }
+    
+    /* Versão verde quando ativo, cinza quando desligado */
+    #toggleConnectionMode {
+        background-color: #22aa22;
+    }
+    
+    #toggleConnectionMode.inactive {
+        background-color: #5a5a5a;
     }
     
     .btn-clear-connections {
@@ -391,6 +526,7 @@
         padding: 10px;
         border-radius: 4px;
         border-left: 4px solid #fb1;
+        margin-bottom: 15px;
     }
     
     .connectable {
@@ -411,44 +547,130 @@
     .selected-element {
         background-color: rgba(0, 102, 204, 0.2) !important;
         box-shadow: 0 0 0 2px #0066cc !important;
-    }
-
-    .edvee-matrix {
+    }    .edvee-matrix {
         display: flex;
         flex-direction: column;
-        gap: 30px;
+        gap: 40px; /* Aumentar espaço entre as linhas para evitar sobreposição */
         margin-top: 30px;
-        padding: 15px;
-        background: #fff;
-        border-radius: 10px;
-    }
-
-    .edvee-row {
+        background: transparent;
+        position: relative; 
+        overflow: visible;
+        width: 100%;
+        padding-bottom: 50px; /* Adicionar espaço na parte inferior para acomodar as linhas */
+    }.edvee-row {
         display: flex;
-        gap: 30px;
         justify-content: space-between;
-        flex-wrap: wrap;
+        position: relative;
+        gap: 20px;
+    }/* Ajuste para melhorar o posicionamento dos círculos de conexão */
+    .connectable {
+        position: relative;
+        padding-left: 20px; /* Espaço para o círculo de conexão à esquerda */
+        padding-right: 25px; /* Espaço para o círculo de conexão à direita */
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Círculo de conexão à esquerda */
+    .connectable:before {
+        content: '';
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+      /* Pontos de conexão para serem usados como pontos de ancoragem para as linhas */
+    .connectable .connection-point-left,
+    .connectable .connection-point-right {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        border: 2px solid;
+    }
+    
+    /* Círculo de conexão à direita - visível */
+    .connectable .connection-point-right {
+        right: 5px;
+        background-color: white;
+    }
+    
+    /* Ponto de conexão à esquerda - visível, para ancorar linhas */
+    .connectable .connection-point-left {
+        left: 0;
+        background-color: white;
+        opacity: 0; /* Invisível, mas mantém a estrutura para ancorar as linhas */
+    }
+    
+    /* Cores específicas para os círculos de conexão baseado na seção */
+    .connectable[data-section="Competencia"]:before {
+        background-color: #e91e63;
+    }
+    
+    .connectable[data-section="Avaliacao"]:before {
+        background-color: #2196f3;
+    }
+    
+    .connectable[data-section="Conteudo"]:before {
+        background-color: #ffc107;
+    }
+    
+    .connectable[data-section="Atividade"]:before {
+        background-color: #4caf50;
+    }
+    
+    /* Cores específicas para os pontos de conexão à direita */
+    .connectable[data-section="Competencia"] .connection-point-right {
+        border-color: #e91e63;
+        background-color: white;
+    }
+    
+    .connectable[data-section="Avaliacao"] .connection-point-right {
+        border-color: #2196f3;
+        background-color: white;
+    }
+    
+    .connectable[data-section="Conteudo"] .connection-point-right {
+        border-color: #ffc107;
+        background-color: white;
+    }
+    
+    .connectable[data-section="Atividade"] .connection-point-right {
+        border-color: #4caf50;
+        background-color: white;
     }
 
     .edvee-box {
         flex: 1;
         background-color: #fff;
         padding: 0;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.3s;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        overflow: visible; /* Alterado de hidden para visible para permitir que as conexões sejam visíveis */
+        min-width: 45%;
+        margin-bottom: 20px;
+        z-index: 1; /* Garante que as caixas fiquem abaixo das linhas de conexão */
     }
 
         .edvee-box:hover {
-            transform: scale(1.02);
-        }
-
-        .edvee-box h3 {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }        .edvee-box h3 {
             margin: 0;
-            padding: 15px;
-            font-size: 18px;
+            padding: 12px 15px;
+            font-size: 16px;
             color: #fff;
+            font-weight: 500;
         }
 
         .edvee-box.competencias h3 {
@@ -466,73 +688,102 @@
 
         .edvee-box.atividades h3 {
             background-color: #4caf50;
-        }
-
-    .edvee-table {
+        }    .edvee-table {
         display: flex;
         flex-direction: column;
         border-top: 1px solid #eee;
-        margin: 10px 15px;
+        margin: 5px 0;
+        padding: 0 10px;
     }
 
         .edvee-table .edvee-row {
             display: flex;
             border-bottom: 1px solid #eee;
-            padding: 10px 0;
+            padding: 8px 0;
             align-items: center;
             transition: background 0.3s;
         }
 
             .edvee-table .edvee-row:hover {
                 background: #f9f9f9;
-            }
-
-    .edvee-cell {
+            }    .edvee-cell {
         flex: 1;
-        padding: 0 10px;
+        padding: 0 5px;
         color: #333;
+        font-size: 14px;
     }
 
         .edvee-cell.actions {
             flex: none;
+            width: 40px;
             white-space: nowrap;
+            text-align: right;
         }
 
         .edvee-cell a {
             transition: color 0.3s;
-        }
-
-    /* Button for editing a component */
-    .btn-edit {
-        background-color: #4caf50;
-        color: #fff;
-        padding: 6px 12px;
-        border-radius: 4px;
-        text-decoration: none;
-        margin-right: 5px;
-        transition: background-color 0.3s;
+        }/* Dropdown menu styles */
+    .dropdown {
+        position: relative;
+        display: inline-block;
     }
 
-        .btn-edit:hover {
-            background-color: #45a049;
-        }
-
-    /* Button for deleting a component */
-    .btn-delete {
-        background-color: #f44336;
-        color: #fff;
+    .dropbtn {
+        background-color: transparent;
+        color: #555;
+        font-size: 18px;
+        font-weight: bold;
         border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
         cursor: pointer;
-        transition: background-color 0.3s;
+        padding: 5px 10px;
+        border-radius: 4px;
     }
 
-        .btn-delete:hover {
-            background-color: #d32f2f;
-        }
+    .dropbtn:hover {
+        background-color: #f1f1f1;
+    }
 
-    /* Button for adding a new component */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 120px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        border-radius: 4px;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown-content a {
+        color: #333;
+        padding: 8px 12px;
+        text-decoration: none;
+        display: block;
+        border-bottom: 1px solid #eee;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .dropdown-btn {
+        background: none;
+        border: none;
+        color: #f44336;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 8px 12px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .dropdown-btn:hover {
+        background-color: #f1f1f1;
+    }    /* Button for adding a new component */
     .btn-add {
         background-color: #2196f3;
         color: #fff;
@@ -547,18 +798,25 @@
         .btn-add:hover {
             background-color: #1976d2;
         }
+        
+    /* Melhoria para a aparência das conexões */
+    .leader-line {
+        z-index: 10 !important; /* Garante que as linhas sempre aparecem acima do conteúdo */
+    }
 
     form input[type="text"] {
-        width: calc(100% - 40px);
+        width: calc(100% - 20px);
         padding: 8px 10px;
-        margin: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        margin: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
         transition: border-color 0.3s;
+        font-size: 14px;
     }
 
         form input[type="text"]:focus {
             border-color: #004488;
             outline: none;
+            box-shadow: 0 0 3px rgba(0, 68, 136, 0.2);
         }
 </style>
