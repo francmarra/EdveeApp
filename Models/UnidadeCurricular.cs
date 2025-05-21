@@ -16,7 +16,8 @@ namespace Edveeeeeee.Models
         [Required]
         public string Turmas { get; set; }
 
-        public string Descricao { get; set; }
+        public string Descricao { get; set; } 
+        //ola
 
         // Relações com componentes EdVee
         public virtual ICollection<Competencia> Competencias { get; set; } = new List<Competencia>();
