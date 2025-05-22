@@ -1,0 +1,222 @@
+/* Estilos para adição de tópicos - Design Melhorado */
+    .add-topic-container {
+        padding: 15px;
+        border-top: 1px solid #eee;
+        position: relative;
+    }
+    
+    .add-topic-btn {
+        width: 100%;
+        padding: 14px 16px;
+        background-color: #f8f9fa;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        color: #666;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .add-topic-btn:before {
+        content: "+";
+        display: inline-block;
+        font-size: 20px;
+        font-weight: 700;
+        transition: transform 0.3s ease;
+    }
+    
+    .add-topic-btn:hover {
+        background-color: #ffffff;
+        border-color: #aaa;
+        color: #333;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        transform: translateY(-1px);
+    }
+    
+    .add-topic-btn:hover:before {
+        transform: rotate(90deg);
+    }
+    
+    .competencias .add-topic-btn {
+        border-color: rgba(233, 30, 99, 0.3);
+    }
+    
+    .competencias .add-topic-btn:hover {
+        color: #e91e63;
+        border-color: #e91e63;
+        background-color: rgba(233, 30, 99, 0.05);
+    }
+    
+    .avaliacoes .add-topic-btn {
+        border-color: rgba(33, 150, 243, 0.3);
+    }
+    
+    .avaliacoes .add-topic-btn:hover {
+        color: #2196f3;
+        border-color: #2196f3;
+        background-color: rgba(33, 150, 243, 0.05);
+    }
+    
+    .conteudos .add-topic-btn {
+        border-color: rgba(255, 193, 7, 0.3);
+    }
+    
+    .conteudos .add-topic-btn:hover {
+        color: #ffc107;
+        border-color: #ffc107;
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+    
+    .atividades .add-topic-btn {
+        border-color: rgba(76, 175, 80, 0.3);
+    }
+    
+    .atividades .add-topic-btn:hover {
+        color: #4caf50;
+        border-color: #4caf50;
+        background-color: rgba(76, 175, 80, 0.05);
+    }
+    
+    .add-topic-form {
+        display: none;
+        margin-top: 15px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .add-topic-form.active {
+        display: block;
+        animation: slideDown 0.35s ease;
+    }
+    
+    @@keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .add-topic-form textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 15px;
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 80px;
+        margin-bottom: 18px;
+        transition: all 0.25s ease;
+        color: #444;
+    }
+    
+    .add-topic-form textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+        color: #000;
+    }
+    
+    .competencias .add-topic-form textarea:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
+    }
+    
+    .avaliacoes .add-topic-form textarea:focus {
+        border-color: #2196f3;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
+    }
+    
+    .conteudos .add-topic-form textarea:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+    }
+    
+    .atividades .add-topic-form textarea:focus {
+        border-color: #4caf50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+    }
+    
+    .add-topic-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+    
+    .btn-cancel, .btn-confirm {
+        padding: 10px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.2s ease;
+        min-width: 100px;
+    }
+    
+    .btn-cancel {
+        background-color: #f1f1f1;
+        color: #555;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+    
+    .btn-confirm {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .btn-confirm:hover {
+        background-color: #0069d9;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Specific colors by section */
+    .competencias .btn-confirm {
+        background-color: #e91e63;
+    }
+    
+    .competencias .btn-confirm:hover {
+        background-color: #d81b60;
+        box-shadow: 0 2px 5px rgba(233, 30, 99, 0.25);
+    }
+    
+    .avaliacoes .btn-confirm {
+        background-color: #2196f3;
+    }
+    
+    .avaliacoes .btn-confirm:hover {
+        background-color: #1976d2;
+        box-shadow: 0 2px 5px rgba(33, 150, 243, 0.25);
+    }
+    
+    .conteudos .btn-confirm {
+        background-color: #ffc107;
+        color: #333;
+    }
+    
+    .conteudos .btn-confirm:hover {
+        background-color: #ffb300;
+        box-shadow: 0 2px 5px rgba(255, 193, 7, 0.25);
+    }
+    
+    .atividades .btn-confirm {
+        background-color: #4caf50;
+    }
+    
+    .atividades .btn-confirm:hover {
+        background-color: #43a047;
+        box-shadow: 0 2px 5px rgba(76, 175, 80, 0.25);
+    }

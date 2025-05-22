@@ -1,5 +1,8 @@
 ﻿@model Edveeeeeee.Models.ViewModels.EdVeeViewModel
 
+<!-- CSS para estilos melhorados de adição de tópicos -->
+<link rel="stylesheet" href="~/css/add-topic-styles.css" />
+
 <h2>EdVee: @Model.UnidadeCurricular.Nome</h2>
 
 @if (!string.IsNullOrWhiteSpace(Model.UnidadeCurricular.Descricao))
@@ -28,8 +31,7 @@
     let selectedElement = null;
     let lines = [];
     let currentConnections = [];
-    
-    // Função para posicionar corretamente os pontos de conexão
+      // Função para posicionar corretamente os pontos de conexão
     function positionConnectionPoints() {
         document.querySelectorAll('.connectable').forEach(element => {
             // Pega o ID do elemento conectável
@@ -45,7 +47,8 @@
                 const containerRect = point.parentElement.getBoundingClientRect();
                 
                 // Calcula a posição vertical relativa ao contêiner
-                const top = elementRect.top - containerRect.top + (elementRect.height / 2);
+                // Usamos altura exata dividida por 2 para garantir o centro exato
+                const top = elementRect.top - containerRect.top + (elementRect.height / 2) - (point.offsetHeight / 2);
                 
                 // Define a posição do ponto
                 point.style.top = `${top}px`;
@@ -110,8 +113,7 @@
                 if (origemPoint && destinoPoint) {
                     // Define a cor da linha baseada nos tipos de origem e destino
                     let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
-                    
-                    // Cria uma linha simples usando os pontos de conexão externos
+                      // Cria uma linha simples usando os pontos de conexão externos
                     const line = new LeaderLine(
                         origemPoint,
                         destinoPoint,
@@ -125,6 +127,8 @@
                             endSocket: 'left',
                             startSocketGravity: 0,  // Sem curva na saída
                             endSocketGravity: 0,    // Sem curva na chegada
+                            startPlugSize: 1, // Tamanho reduzido para melhor alinhamento
+                            endPlugSize: 1,    // Tamanho reduzido para melhor alinhamento
                             dash: {animation: true}
                         }
                     );
@@ -225,8 +229,7 @@
                 
                 if (origemPoint && destinoPoint) {
                     let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
-                    
-                    // Cria a linha visual
+                      // Cria a linha visual
                     const line = new LeaderLine(
                         origemPoint,
                         destinoPoint,
@@ -240,6 +243,8 @@
                             endSocket: 'left',
                             startSocketGravity: 0,
                             endSocketGravity: 0,
+                            startPlugSize: 1, // Tamanho reduzido para melhor alinhamento
+                            endPlugSize: 1,    // Tamanho reduzido para melhor alinhamento
                             dash: {animation: true}
                         }
                     );
@@ -291,9 +296,7 @@
             
             if (!existingConnection && origemElement && destinoElement) {
                 // Define a cor da linha baseada nas seções
-                let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
-                
-                // Cria a linha visual simples
+                let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);                    // Cria a linha visual simples
                 const line = new LeaderLine(
                     origem,
                     destino,
@@ -306,7 +309,9 @@
                         startSocket: 'right',
                         endSocket: 'left',
                         startSocketGravity: 0,
-                        endSocketGravity: 0
+                        endSocketGravity: 0,
+                        startPlugSize: 1, // Tamanho reduzido para melhor alinhamento
+                        endPlugSize: 1    // Tamanho reduzido para melhor alinhamento
                     }
                 );
                 lines.push(line);
@@ -366,6 +371,73 @@
             childList: true, 
             subtree: true,
             attributes: true
+        });        // Add topic form toggle functionality
+        document.querySelectorAll('.add-topic-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetForm = document.getElementById(targetId);
+                
+                // Efeito visual ao clicar no botão
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+                
+                // Close any open forms first
+                document.querySelectorAll('.add-topic-form.active').forEach(openForm => {
+                    if (openForm.id !== targetId) {
+                        openForm.classList.remove('active');
+                        setTimeout(() => {
+                            openForm.querySelector('textarea').value = ''; // Clear the input
+                        }, 300);
+                    }
+                });
+                
+                // Toggle the target form
+                targetForm.classList.toggle('active');
+                
+                // Focus on the textarea if form is now active
+                if (targetForm.classList.contains('active')) {
+                    setTimeout(() => {
+                        targetForm.querySelector('textarea').focus();
+                    }, 100);
+                }
+            });
+        });
+        
+        // Cancel button functionality
+        document.querySelectorAll('.btn-cancel').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = this.closest('.add-topic-form');
+                
+                // Efeito visual ao clicar no botão
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+                
+                form.classList.remove('active');
+                
+                // Clear the input with delay
+                setTimeout(() => {
+                    form.querySelector('textarea').value = '';
+                }, 300);
+            });
+        });
+        
+        // Confirm button visual feedback
+        document.querySelectorAll('.btn-confirm').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'scale(1)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
         });
     });
 </script>
@@ -403,11 +475,19 @@
                     </div>
                 }
             </div>
-            <form asp-action="AddCompetencia" method="post">
-                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Nova competência..." />
-                <button type="submit" class="btn-add">+</button>
-            </form>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-competencia-form">+ Nova Competência</button>
+                <div id="add-competencia-form" class="add-topic-form">
+                    <form asp-action="AddCompetencia" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva a nova competência..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Avaliação -->
@@ -441,11 +521,19 @@
                     </div>
                 }
             </div>
-            <form asp-action="AddAvaliacao" method="post">
-                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Nova avaliação..." />
-                <button type="submit" class="btn-add">+</button>
-            </form>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-avaliacao-form">+ Nova Avaliação</button>
+                <div id="add-avaliacao-form" class="add-topic-form">
+                    <form asp-action="AddAvaliacao" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva a nova avaliação..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -481,11 +569,19 @@
                     </div>
                 }
             </div>
-            <form asp-action="AddConteudo" method="post">
-                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Novo conteúdo..." />
-                <button type="submit" class="btn-add">+</button>
-            </form>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-conteudo-form">+ Novo Conteúdo</button>
+                <div id="add-conteudo-form" class="add-topic-form">
+                    <form asp-action="AddConteudo" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva o novo conteúdo..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Atividades -->
@@ -519,11 +615,19 @@
                     </div>
                 }
             </div>
-            <form asp-action="AddAtividade" method="post">
-                <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
-                <input type="text" name="texto" placeholder="Nova atividade..." />
-                <button type="submit" class="btn-add">+</button>
-            </form>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-atividade-form">+ Nova Atividade</button>
+                <div id="add-atividade-form" class="add-topic-form">
+                    <form asp-action="AddAtividade" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva a nova atividade..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -873,8 +977,7 @@
         cursor: pointer;
         margin: 8px 0;
     }
-    
-    .connection-point {
+      .connection-point {
         position: absolute;
         width: 12px;
         height: 12px;
@@ -883,9 +986,10 @@
         border: 2px solid;
         z-index: 10;
         cursor: pointer;
+        transform: translateX(-50%); /* Centraliza horizontalmente */
+        box-sizing: border-box;
     }
-    
-    .connection-point[data-section="Competencia"] {
+      .connection-point[data-section="Competencia"] {
         border-color: #e91e63;
     }
     
