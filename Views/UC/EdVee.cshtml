@@ -12,8 +12,8 @@
     <h4>Conexões Entre Secções</h4>
     <div class="connection-controls">
         <button id="toggleConnectionMode" class="btn-connection-mode inactive">Modo de Conexão: DESLIGADO</button>
-        <button id="clearConnections" class="btn-clear-connections">Limpar Conexões</button>
-        <button id="saveConnections" class="btn-save-connections">Salvar Conexões</button>
+        <button id="clearConnections" class="btn-clear-connections" style="display: none;">Limpar Conexões</button>
+        <button id="saveConnections" class="btn-save-connections" style="display: none;">Salvar Conexões</button>
     </div>
     <div class="connection-instructions" style="display:none; margin-top: 10px;">
         <p>Para criar uma ligação: <b>Clique</b> em um elemento e depois <b>clique</b> em outro elemento para ligar.</p>
@@ -145,14 +145,18 @@
         connectionMode = !connectionMode;
         const button = document.getElementById('toggleConnectionMode');
         const instructions = document.querySelector('.connection-instructions');
+        const clearBtn = document.getElementById('clearConnections');
+        const saveBtn = document.getElementById('saveConnections');
         
         if (connectionMode) {
             button.textContent = 'Modo de Conexão: LIGADO';
             button.classList.add('active');
             button.classList.remove('inactive');
             instructions.style.display = 'block';
+            clearBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'inline-block';
             
-            // Adiciona classe de destaque aos elementos
+            // Adiciona classe de destaque aos elementos conectáveis
             document.querySelectorAll('.connectable').forEach(el => {
                 el.classList.add('connection-mode');
             });
@@ -161,6 +165,8 @@
             button.classList.remove('active');
             button.classList.add('inactive');
             instructions.style.display = 'none';
+            clearBtn.style.display = 'none';
+            saveBtn.style.display = 'none';
             selectedElement = null;
             
             // Remove classe de destaque
