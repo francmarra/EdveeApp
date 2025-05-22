@@ -28,7 +28,32 @@
     let selectedElement = null;
     let lines = [];
     let currentConnections = [];
-      // Função para recuperar as ligações existentes do servidor
+    
+    // Função para posicionar corretamente os pontos de conexão
+    function positionConnectionPoints() {
+        document.querySelectorAll('.connectable').forEach(element => {
+            // Pega o ID do elemento conectável
+            const id = element.dataset.id;
+            const section = element.dataset.section;
+            
+            // Encontra os pontos de conexão relacionados
+            const connectionPoints = document.querySelectorAll(`.connection-point[data-for="${id}"]`);
+            
+            connectionPoints.forEach(point => {
+                // Ajusta a posição vertical para alinhar com o elemento
+                const elementRect = element.getBoundingClientRect();
+                const containerRect = point.parentElement.getBoundingClientRect();
+                
+                // Calcula a posição vertical relativa ao contêiner
+                const top = elementRect.top - containerRect.top + (elementRect.height / 2);
+                
+                // Define a posição do ponto
+                point.style.top = `${top}px`;
+            });
+        });
+    }
+    
+    // Função para recuperar as ligações existentes do servidor
     async function loadConnections() {
         try {
             const response = await fetch('/UC/GetConnections/@Model.UnidadeCurricular.Id');
@@ -65,52 +90,51 @@
             console.error('Erro ao salvar conexões:', error);
             alert('Erro ao salvar as conexões.');
         }
-    }    // Função para desenhar as ligações na tela
+    }
+    
+    // Função para desenhar as ligações na tela
     function renderConnections(connections) {
         // Limpa as linhas existentes
         clearLines();
         
         // Para cada conexão, cria uma linha
         connections.forEach(conn => {
-            const origem = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
-            const destino = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
+            const origemElement = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
+            const destinoElement = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
             
-            if (origem && destino) {                
-                // Define a cor da linha baseada nos tipos de origem e destino
-                let lineColor = getLineColor(origem.dataset.section, destino.dataset.section);
+            if (origemElement && destinoElement) {
+                // Encontra os pontos de conexão externos
+                const origemPoint = document.querySelector(`.connection-point[data-for="${conn.origemTipo}-${conn.origemId}"]`);
+                const destinoPoint = document.querySelector(`.connection-point[data-for="${conn.destinoTipo}-${conn.destinoId}"]`);
                 
-                // Seleciona o elemento de conexão do lado direito do tema de origem
-                const origemPoint = origem.querySelector('.connection-point-right');
-                const destinoPoint = destino.querySelector('.connection-point-left');
-                  // Cria uma linha simples usando os pontos de conexão
-                const line = new LeaderLine(
-                    origemPoint || origem,
-                    destinoPoint || destino,
-                    {
-                        path: 'straight',
-                        endPlug: 'behind',  // Remove a seta no final
-                        startPlug: 'behind', // Remove a seta no início
-                        size: 2,
-                        color: lineColor,
-                        startSocket: 'right',
-                        endSocket: 'left',
-                        startSocketGravity: 100,  // Força a linha a sair horizontalmente
-                        endSocketGravity: 100,    // Força a linha a chegar horizontalmente
-                        dash: {animation: true}   // Adiciona animação à linha (opcional)
-                    }
-                );
-                lines.push(line);
-                
-                // Adiciona a conexão à lista atual
-                currentConnections.push({
-                    origemTipo: conn.origemTipo,
-                    origemId: conn.origemId,
-                    destinoTipo: conn.destinoTipo,
-                    destinoId: conn.destinoId
-                });
+                if (origemPoint && destinoPoint) {
+                    // Define a cor da linha baseada nos tipos de origem e destino
+                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
+                    
+                    // Cria uma linha simples usando os pontos de conexão externos
+                    const line = new LeaderLine(
+                        origemPoint,
+                        destinoPoint,
+                        {
+                            path: 'straight',
+                            endPlug: 'behind',
+                            startPlug: 'behind',
+                            size: 2,
+                            color: lineColor,
+                            startSocket: 'right',
+                            endSocket: 'left',
+                            startSocketGravity: 0,  // Sem curva na saída
+                            endSocketGravity: 0,    // Sem curva na chegada
+                            dash: {animation: true}
+                        }
+                    );
+                    lines.push(line);
+                }
             }
         });
-    }    // Função para determinar a cor da linha baseada nos tipos de origem e destino
+    }
+    
+    // Função para determinar a cor da linha baseada nos tipos de origem e destino
     function getLineColor(origemSection, destinoSection) {
         // Cor padrão
         let color = '#0066cc';
@@ -132,7 +156,8 @@
         
         return color;
     }
-      // Função para limpar todas as linhas
+    
+    // Função para limpar todas as linhas
     function clearLines() {
         lines.forEach(line => line.remove());
         lines = [];
@@ -140,7 +165,9 @@
         if (connectionMode) {
             currentConnections = [];
         }
-    }      // Função para ativar/desativar o modo de conexão
+    }
+    
+    // Função para ativar/desativar o modo de conexão
     function toggleConnectionMode() {
         connectionMode = !connectionMode;
         const button = document.getElementById('toggleConnectionMode');
@@ -156,8 +183,8 @@
             clearBtn.style.display = 'inline-block';
             saveBtn.style.display = 'inline-block';
             
-            // Adiciona classe de destaque aos elementos conectáveis
-            document.querySelectorAll('.connectable').forEach(el => {
+            // Adiciona classe de destaque aos pontos de conexão
+            document.querySelectorAll('.connection-point').forEach(el => {
                 el.classList.add('connection-mode');
             });
         } else {
@@ -170,12 +197,12 @@
             selectedElement = null;
             
             // Remove classe de destaque
-            document.querySelectorAll('.connectable').forEach(el => {
+            document.querySelectorAll('.connection-point').forEach(el => {
                 el.classList.remove('connection-mode');
                 el.classList.remove('selected-element');
             });
             
-            // Renderiza novamente as conexões existentes para garantir que permaneçam visíveis
+            // Renderiza novamente as conexões existentes
             renderStoredConnections();
         }
     }
@@ -188,41 +215,46 @@
         
         // Para cada conexão armazenada, cria uma linha visual
         currentConnections.forEach(conn => {
-            const origem = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
-            const destino = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
+            const origemElement = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
+            const destinoElement = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
             
-            if (origem && destino) {
-                let lineColor = getLineColor(origem.dataset.section, destino.dataset.section);
+            if (origemElement && destinoElement) {
+                // Encontra os pontos de conexão externos
+                const origemPoint = document.querySelector(`.connection-point[data-for="${conn.origemTipo}-${conn.origemId}"]`);
+                const destinoPoint = document.querySelector(`.connection-point[data-for="${conn.destinoTipo}-${conn.destinoId}"]`);
                 
-                // Seleciona os pontos de conexão
-                const origemPoint = origem.querySelector('.connection-point-right');
-                const destinoPoint = destino.querySelector('.connection-point-left');
-                  // Cria a linha visual
-                const line = new LeaderLine(
-                    origemPoint || origem,
-                    destinoPoint || destino,
-                    {
-                        path: 'straight',
-                        endPlug: 'behind',  // Remove a seta no final
-                        startPlug: 'behind', // Remove a seta no início
-                        size: 2,
-                        color: lineColor,
-                        startSocket: 'right',
-                        endSocket: 'left',
-                        startSocketGravity: 100,  // Força a linha a sair horizontalmente
-                        endSocketGravity: 100,    // Força a linha a chegar horizontalmente
-                        dash: {animation: true}   // Adiciona animação à linha (opcional)
-                    }
-                );
-                lines.push(line);
+                if (origemPoint && destinoPoint) {
+                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
+                    
+                    // Cria a linha visual
+                    const line = new LeaderLine(
+                        origemPoint,
+                        destinoPoint,
+                        {
+                            path: 'straight',
+                            endPlug: 'behind',
+                            startPlug: 'behind',
+                            size: 2,
+                            color: lineColor,
+                            startSocket: 'right',
+                            endSocket: 'left',
+                            startSocketGravity: 0,
+                            endSocketGravity: 0,
+                            dash: {animation: true}
+                        }
+                    );
+                    lines.push(line);
+                }
             }
         });
     }
-      // Manipulador de clique para selecionar elementos
-    function handleElementClick(e) {
+    
+    // Manipulador de clique para selecionar elementos
+    function handleConnectionPointClick(e) {
         if (!connectionMode) return;
         
         const element = e.currentTarget;
+        const connectableId = element.dataset.for;
         
         if (!selectedElement) {
             // Primeira seleção
@@ -237,8 +269,17 @@
             const origem = selectedElement;
             const destino = element;
             
-            const [origemTipo, origemId] = origem.dataset.id.split('-');
-            const [destinoTipo, destinoId] = destino.dataset.id.split('-');
+            // Busca os IDs dos elementos conectáveis
+            const origemConnectableId = origem.dataset.for;
+            const destinoConnectableId = destino.dataset.for;
+            
+            // Extrai tipo e ID
+            const [origemTipo, origemId] = origemConnectableId.split('-');
+            const [destinoTipo, destinoId] = destinoConnectableId.split('-');
+            
+            // Encontra os elementos conectáveis para usar seus datasets
+            const origemElement = document.querySelector(`[data-id="${origemConnectableId}"]`);
+            const destinoElement = document.querySelector(`[data-id="${destinoConnectableId}"]`);
             
             // Verifica se a conexão já existe
             const existingConnection = currentConnections.find(
@@ -246,26 +287,26 @@
                        conn.origemTipo === origemTipo &&
                        conn.destinoId == destinoId &&
                        conn.destinoTipo === destinoTipo
-            );              if (!existingConnection) {                // Define a cor da linha baseada nas seções de origem e destino
-                let lineColor = getLineColor(origem.dataset.section, destino.dataset.section);
-                  
-                // Seleciona o elemento de conexão do lado direito do tema de origem
-                const origemPoint = origem.querySelector('.connection-point-right');
-                const destinoPoint = destino.querySelector('.connection-point-left');
+            );
+            
+            if (!existingConnection && origemElement && destinoElement) {
+                // Define a cor da linha baseada nas seções
+                let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
                 
                 // Cria a linha visual simples
                 const line = new LeaderLine(
-                    origemPoint || origem,
-                    destinoPoint || destino,
+                    origem,
+                    destino,
                     {
                         path: 'straight',
-                        endPlug: 'arrow1',
+                        endPlug: 'behind',
+                        startPlug: 'behind',
                         size: 2,
                         color: lineColor,
                         startSocket: 'right',
                         endSocket: 'left',
-                        startSocketGravity: 80,  // Ajuda a linha a sair mais horizontalmente
-                        endSocketGravity: 80     // Ajuda a linha a chegar mais horizontalmente
+                        startSocketGravity: 0,
+                        endSocketGravity: 0
                     }
                 );
                 lines.push(line);
@@ -284,35 +325,39 @@
             selectedElement = null;
         }
     }
-      // Inicialização
+    
+    // Inicialização
     window.addEventListener('DOMContentLoaded', () => {
+        // Posiciona os pontos de conexão
+        positionConnectionPoints();
+        
         // Carrega conexões existentes
         loadConnections();
         
         // Configura handlers dos botões
         document.getElementById('toggleConnectionMode').addEventListener('click', toggleConnectionMode);
         document.getElementById('clearConnections').addEventListener('click', () => {
-            clearLines(); // Limpa as linhas e as conexões
-            // Renderiza as conexões novamente se não estiver no modo de conexão
+            clearLines();
             if (!connectionMode) {
                 renderStoredConnections();
             }
         });
         document.getElementById('saveConnections').addEventListener('click', saveConnections);
         
-        // Adiciona handler de clique a todos os elementos conectáveis
-        document.querySelectorAll('.connectable').forEach(el => {
-            el.addEventListener('click', handleElementClick);
+        // Adiciona handler de clique aos pontos de conexão
+        document.querySelectorAll('.connection-point').forEach(el => {
+            el.addEventListener('click', handleConnectionPointClick);
         });
         
         // Ajusta as linhas quando a janela é redimensionada
         window.addEventListener('resize', () => {
+            positionConnectionPoints();
             lines.forEach(line => line.position());
         });
         
-        // Adicionar um observer para reagir à rolagem da página ou outras alterações no layout
+        // Observer para mudanças no layout
         const observer = new MutationObserver(() => {
-            // Reposiciona todas as linhas quando houver mudanças no DOM
+            positionConnectionPoints();
             lines.forEach(line => line.position());
         });
         
@@ -325,17 +370,22 @@
     });
 </script>
 
-<div class="edvee-matrix">    <div class="edvee-row">
+<div class="edvee-matrix">
+    <div class="edvee-row">
         <!-- Competências -->
         <div class="edvee-box competencias">
             <h3>Competências</h3>
-            <div class="edvee-table">                @foreach (var c in Model.Competencias)
+            <div class="edvee-table">
+                @foreach (var c in Model.Competencias)
                 {
-                    <div class="edvee-row">                        <div class="edvee-cell">
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
                             <div class="connectable" data-id="Competencia-@c.Id" data-section="Competencia">
                                 @c.Texto
-                                <div class="connection-point-left"></div>
-                                <div class="connection-point-right"></div>
+                            </div>
+                            <!-- Pontos de conexão à direita -->
+                            <div class="connection-point-container connection-points-right">
+                                <div class="connection-point" data-section="Competencia" data-for="Competencia-@c.Id"></div>
                             </div>
                         </div>
                         <div class="edvee-cell actions">
@@ -363,13 +413,17 @@
         <!-- Avaliação -->
         <div class="edvee-box avaliacoes">
             <h3>Avaliação</h3>
-            <div class="edvee-table">                @foreach (var a in Model.Avaliacoes)
+            <div class="edvee-table">
+                @foreach (var a in Model.Avaliacoes)
                 {
-                    <div class="edvee-row">                        <div class="edvee-cell">
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
+                            <!-- Pontos de conexão à esquerda -->
+                            <div class="connection-point-container connection-points-left">
+                                <div class="connection-point" data-section="Avaliacao" data-for="Avaliacao-@a.Id"></div>
+                            </div>
                             <div class="connectable" data-id="Avaliacao-@a.Id" data-section="Avaliacao">
                                 @a.Texto
-                                <div class="connection-point-left"></div>
-                                <div class="connection-point-right"></div>
                             </div>
                         </div>
                         <div class="edvee-cell actions">
@@ -393,17 +447,23 @@
                 <button type="submit" class="btn-add">+</button>
             </form>
         </div>
-    </div>    <div class="edvee-row">
+    </div>
+    
+    <div class="edvee-row">
         <!-- Conteúdos -->
         <div class="edvee-box conteudos">
             <h3>Conteúdos</h3>
-            <div class="edvee-table">                @foreach (var c in Model.Conteudos)
+            <div class="edvee-table">
+                @foreach (var c in Model.Conteudos)
                 {
-                    <div class="edvee-row">                        <div class="edvee-cell">
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
                             <div class="connectable" data-id="Conteudo-@c.Id" data-section="Conteudo">
                                 @c.Texto
-                                <div class="connection-point-left"></div>
-                                <div class="connection-point-right"></div>
+                            </div>
+                            <!-- Pontos de conexão à direita -->
+                            <div class="connection-point-container connection-points-right">
+                                <div class="connection-point" data-section="Conteudo" data-for="Conteudo-@c.Id"></div>
                             </div>
                         </div>
                         <div class="edvee-cell actions">
@@ -431,13 +491,17 @@
         <!-- Atividades -->
         <div class="edvee-box atividades">
             <h3>Atividades</h3>
-            <div class="edvee-table">                @foreach (var a in Model.Atividades)
+            <div class="edvee-table">
+                @foreach (var a in Model.Atividades)
                 {
-                    <div class="edvee-row">                        <div class="edvee-cell">
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
+                            <!-- Pontos de conexão à esquerda -->
+                            <div class="connection-point-container connection-points-left">
+                                <div class="connection-point" data-section="Atividade" data-for="Atividade-@a.Id"></div>
+                            </div>
                             <div class="connectable" data-id="Atividade-@a.Id" data-section="Atividade">
                                 @a.Texto
-                                <div class="connection-point-left"></div>
-                                <div class="connection-point-right"></div>
                             </div>
                         </div>
                         <div class="edvee-cell actions">
@@ -485,7 +549,9 @@
         padding: 8px 14px;
         border-radius: 4px;
         text-decoration: none;
-    }    .btn-connection-mode, .btn-clear-connections, .btn-save-connections {
+    }
+    
+    .btn-connection-mode, .btn-clear-connections, .btn-save-connections {
         padding: 8px 14px;
         border-radius: 4px;
         border: none;
@@ -539,6 +605,8 @@
         position: relative;
         cursor: pointer;
         transition: all 0.2s;
+        padding: 10px 35px 10px 30px; /* Increased padding for more space */
+        margin: 8px 0; /* More vertical space between items */
     }
     
     .connection-mode {
@@ -553,22 +621,28 @@
     .selected-element {
         background-color: rgba(0, 102, 204, 0.2) !important;
         box-shadow: 0 0 0 2px #0066cc !important;
-    }    .edvee-matrix {
+    }
+    
+    .edvee-matrix {
         display: flex;
         flex-direction: column;
-        gap: 60px; /* Increased gap between rows */
+        gap: 80px; /* Significantly increased gap between rows to match the image */
         margin-top: 30px;
         background: transparent;
         position: relative; 
         overflow: visible;
         width: 100%;
-        padding-bottom: 80px; /* Added more space at bottom */
-    }.edvee-row {
+        padding-bottom: 100px; /* Added more space at bottom */
+    }
+    
+    .edvee-row {
         display: flex;
         justify-content: space-between;
         position: relative;
-        gap: 80px; /* Increased horizontal gap between sections */
-    }/* Improved connector positioning */
+        gap: 100px; /* Significantly increased horizontal gap between sections */
+    }
+    
+    /* Improved connector positioning */
     .connectable {
         position: relative;
         padding: 8px 30px 8px 25px; /* Increased padding for better space around text */
@@ -657,81 +731,88 @@
     .connectable[data-section="Atividade"] .connection-point-left {
         border-color: #4caf50;
     }
-
+    
     .edvee-box {
         flex: 1;
         background-color: #fff;
         padding: 0;
-        border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px; /* Slightly rounder corners */
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
         overflow: visible; /* Alterado de hidden para visible para permitir que as conexões sejam visíveis */
         min-width: 40%; /* Slightly reduced to allow more space between boxes */
         max-width: 45%; /* Add max-width to maintain proportions */
         margin-bottom: 20px;
         z-index: 1; /* Garante que as caixas fiquem abaixo das linhas de conexão */
     }
-
-        .edvee-box:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }        .edvee-box h3 {
-            margin: 0;
-            padding: 12px 15px;
-            font-size: 16px;
-            color: #fff;
-            font-weight: 500;
-        }
-
-        .edvee-box.competencias h3 {
-            background-color: #e91e63;
-        }
-
-        .edvee-box.avaliacoes h3 {
-            background-color: #2196f3;
-        }
-
-        .edvee-box.conteudos h3 {
-            background-color: #ffc107;
-            color: #333;
-        }
-
-        .edvee-box.atividades h3 {
-            background-color: #4caf50;
-        }    .edvee-table {
+    
+    .edvee-box:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .edvee-box h3 {
+        margin: 0;
+        padding: 15px 20px; /* Increased padding for header */
+        font-size: 18px; /* Larger font size */
+        color: #fff;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    
+    .edvee-box.competencias h3 {
+        background-color: #e91e63;
+    }
+    
+    .edvee-box.avaliacoes h3 {
+        background-color: #2196f3;
+    }
+    
+    .edvee-box.conteudos h3 {
+        background-color: #ffc107;
+    }
+    
+    .edvee-box.atividades h3 {
+        background-color: #4caf50;
+    }
+    
+    .edvee-table {
         display: flex;
         flex-direction: column;
-        border-top: 1px solid #eee;
-        margin: 5px 0;
-        padding: 0 10px;
+        gap: 15px; /* Increased gap between cells */
+        padding: 15px;
     }
-
-        .edvee-table .edvee-row {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            padding: 10px 0; /* Increased vertical padding */
-            align-items: center;
-            transition: background 0.3s;
-            gap: 10px; /* Added gap between cells in a row */
-        }
-
-            .edvee-table .edvee-row:hover {
-                background: #f9f9f9;
-            }    .edvee-cell {
+    
+    .edvee-table .edvee-row {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .edvee-table .edvee-row:hover {
+        background: #f9f9f9;
+    }
+    
+    .edvee-cell {
         flex: 1;
-        padding: 0 5px;
+        padding: 0 8px; /* Increased horizontal padding */
         color: #333;
         font-size: 14px;
+        line-height: 1.5; /* Added line height for better readability */
     }
-
-        .edvee-cell.actions {
-            flex: none;
-            width: 40px;
-            white-space: nowrap;
-            text-align: right;
-        }
-
-        .edvee-cell a {
-            transition: color 0.3s;
-        }/* Dropdown menu styles */
+    
+    .edvee-cell.actions {
+        flex: none;
+        width: 40px;
+        white-space: nowrap;
+        text-align: right;
+        margin-left: 10px; /* Added margin to separate from content */
+    }
+    
+    .edvee-cell a {
+        transition: color 0.3s;
+    }
+    
+    /* Dropdown menu styles */
     .dropdown {
         position: relative;
         display: inline-block;
@@ -792,7 +873,9 @@
 
     .dropdown-btn:hover {
         background-color: #f1f1f1;
-    }    /* Button for adding a new component */
+    }
+    
+    /* Button for adding a new component */
     .btn-add {
         background-color: #2196f3;
         color: #fff;
@@ -804,28 +887,83 @@
         margin-top: 10px;
     }
 
-        .btn-add:hover {
-            background-color: #1976d2;
-        }
+    .btn-add:hover {
+        background-color: #1976d2;
+    }
         
     /* Melhoria para a aparência das conexões */
     .leader-line {
-        z-index: 10 !important; /* Garante que as linhas sempre aparecem acima do conteúdo */
+        z-index: 100 !important; /* Garante que as linhas sempre aparecem acima do conteúdo */
+    }
+    
+    /* Novo estilo para pontos de conexão fora das tabelas */
+    .connection-point-container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        z-index: 5;
+    }
+    
+    /* Container para pontos à esquerda */
+    .connection-points-left {
+        left: -15px;
+    }
+    
+    /* Container para pontos à direita */
+    .connection-points-right {
+        right: -15px;
+    }
+    
+    /* Para melhor visualização dos pontos de conexão */
+    .connectable {
+        position: relative;
+        padding: 10px 15px;
+        cursor: pointer;
+        margin: 8px 0;
+    }
+    
+    .connection-point {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: white;
+        border: 2px solid;
+        z-index: 10;
+        cursor: pointer;
+    }
+    
+    .connection-point[data-section="Competencia"] {
+        border-color: #e91e63;
+    }
+    
+    .connection-point[data-section="Avaliacao"] {
+        border-color: #2196f3;
+    }
+    
+    .connection-point[data-section="Conteudo"] {
+        border-color: #ffc107;
+    }
+    
+    .connection-point[data-section="Atividade"] {
+        border-color: #4caf50;
+    }
+    
+    /* Ajustes nas caixas para acomodar o novo layout */
+    .edvee-box {
+        position: relative;
+        overflow: visible;
+        z-index: 1;
     }
 
     form input[type="text"] {
-        width: calc(100% - 20px);
-        padding: 8px 10px;
-        margin: 5px 10px;
+        width: calc(100% - 30px);
+        padding: 10px 12px;
+        margin: 8px 15px;
         border: 1px solid #ddd;
         border-radius: 4px;
         transition: border-color 0.3s;
         font-size: 14px;
     }
-
-        form input[type="text"]:focus {
-            border-color: #004488;
-            outline: none;
-            box-shadow: 0 0 3px rgba(0, 68, 136, 0.2);
-        }
 </style>
