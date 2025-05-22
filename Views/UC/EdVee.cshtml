@@ -41,8 +41,7 @@
             // Encontra os pontos de conexão relacionados
             const connectionPoints = document.querySelectorAll(`.connection-point[data-for="${id}"]`);
             
-            connectionPoints.forEach(point => {
-                // Ajusta a posição vertical para alinhar com o elemento
+            connectionPoints.forEach(point => {                // Ajusta a posição vertical para alinhar com o elemento
                 const elementRect = element.getBoundingClientRect();
                 const containerRect = point.parentElement.getBoundingClientRect();
                 
@@ -112,8 +111,7 @@
                 
                 if (origemPoint && destinoPoint) {
                     // Define a cor da linha baseada nos tipos de origem e destino
-                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
-                      // Cria uma linha simples usando os pontos de conexão externos
+                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);                    // Cria uma linha simples usando os pontos de conexão externos
                     const line = new LeaderLine(
                         origemPoint,
                         destinoPoint,
@@ -121,7 +119,7 @@
                             path: 'straight',
                             endPlug: 'behind',
                             startPlug: 'behind',
-                            size: 2,
+                            size: 2.5,
                             color: lineColor,
                             startSocket: 'right',
                             endSocket: 'left',
@@ -186,11 +184,13 @@
             instructions.style.display = 'block';
             clearBtn.style.display = 'inline-block';
             saveBtn.style.display = 'inline-block';
-            
-            // Adiciona classe de destaque aos pontos de conexão
+              // Adiciona classe de destaque aos pontos de conexão
             document.querySelectorAll('.connection-point').forEach(el => {
                 el.classList.add('connection-mode');
             });
+            
+            // Atualiza os tooltips
+            setConnectionPointTooltips();
         } else {
             button.textContent = 'Modo de Conexão: DESLIGADO';
             button.classList.remove('active');
@@ -205,6 +205,9 @@
                 el.classList.remove('connection-mode');
                 el.classList.remove('selected-element');
             });
+            
+            // Atualiza os tooltips
+            setConnectionPointTooltips();
             
             // Renderiza novamente as conexões existentes
             renderStoredConnections();
@@ -228,8 +231,7 @@
                 const destinoPoint = document.querySelector(`.connection-point[data-for="${conn.destinoTipo}-${conn.destinoId}"]`);
                 
                 if (origemPoint && destinoPoint) {
-                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
-                      // Cria a linha visual
+                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);                      // Cria a linha visual
                     const line = new LeaderLine(
                         origemPoint,
                         destinoPoint,
@@ -237,7 +239,7 @@
                             path: 'straight',
                             endPlug: 'behind',
                             startPlug: 'behind',
-                            size: 2,
+                            size: 2.5, // Linha um pouco mais espessa para melhor visualização
                             color: lineColor,
                             startSocket: 'right',
                             endSocket: 'left',
@@ -254,21 +256,61 @@
         });
     }
     
+    // Função para limpar o estado de "pode conectar" de todos os pontos
+    function clearCanConnectStatus() {
+        document.querySelectorAll('.connection-point').forEach(el => {
+            el.classList.remove('can-connect');
+        });
+    }
+    
+    // Função para mostrar pontos que podem ser conectados
+    function showConnectablePotentials(selectedPoint) {
+        if (!selectedPoint) return;
+        
+        // Determinar os tipos compatíveis com base no selecionado
+        const [tipo, id] = selectedPoint.dataset.for.split('-');
+        const section = selectedPoint.dataset.section;
+        
+        // Diferentes regras de conexão baseadas no tipo
+        let compatibleSections = [];
+        
+        if (section === "Competencia") {
+            compatibleSections = ["Conteudo", "Avaliacao", "Atividade"];
+        } else if (section === "Conteudo") {
+            compatibleSections = ["Avaliacao", "Atividade"];
+        } else if (section === "Avaliacao") {
+            compatibleSections = ["Atividade"];
+        }
+        
+        // Adicionar a classe aos pontos compatíveis
+        document.querySelectorAll('.connection-point').forEach(el => {
+            if (el === selectedPoint) return; // Pula o próprio ponto
+            
+            const pointSection = el.dataset.section;
+            if (compatibleSections.includes(pointSection)) {
+                el.classList.add('can-connect');
+            }
+        });
+    }
+    
     // Manipulador de clique para selecionar elementos
     function handleConnectionPointClick(e) {
         if (!connectionMode) return;
         
         const element = e.currentTarget;
         const connectableId = element.dataset.for;
-        
-        if (!selectedElement) {
+          if (!selectedElement) {
             // Primeira seleção
             selectedElement = element;
             element.classList.add('selected-element');
+            showConnectablePotentials(element); // Mostrar pontos que podem ser conectados
+            setConnectionPointTooltips(); // Atualizar tooltips
         } else if (selectedElement === element) {
             // Clicou no mesmo elemento - deseleciona
             selectedElement.classList.remove('selected-element');
             selectedElement = null;
+            clearCanConnectStatus(); // Limpar estado de "pode conectar"
+            setConnectionPointTooltips(); // Atualizar tooltips
         } else {
             // Segunda seleção - cria a conexão
             const origem = selectedElement;
@@ -294,8 +336,7 @@
                        conn.destinoTipo === destinoTipo
             );
             
-            if (!existingConnection && origemElement && destinoElement) {
-                // Define a cor da linha baseada nas seções
+            if (!existingConnection && origemElement && destinoElement) {                // Define a cor da linha baseada nas seções
                 let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);                    // Cria a linha visual simples
                 const line = new LeaderLine(
                     origem,
@@ -304,7 +345,7 @@
                         path: 'straight',
                         endPlug: 'behind',
                         startPlug: 'behind',
-                        size: 2,
+                        size: 2.5,
                         color: lineColor,
                         startSocket: 'right',
                         endSocket: 'left',
@@ -323,18 +364,60 @@
                     destinoTipo: destinoTipo,
                     destinoId: destinoId
                 });
+                
+                // Exibe feedback visual
+                showConnectionFeedback(origem, destino);
             }
-            
-            // Limpa a seleção
+              // Limpa a seleção
             selectedElement.classList.remove('selected-element');
             selectedElement = null;
+            clearCanConnectStatus(); // Limpar estado de "pode conectar"
+            setConnectionPointTooltips(); // Atualizar tooltips
         }
     }
     
-    // Inicialização
+    // Função para exibir feedback visual quando uma conexão é criada
+    function showConnectionFeedback(origem, destino) {
+        // Adiciona uma classe temporária para indicar sucesso
+        [origem, destino].forEach(el => {
+            el.classList.add('connection-success');
+            
+            // Remove a classe após a animação
+            setTimeout(() => {
+                el.classList.remove('connection-success');
+            }, 1000);
+        });
+    }
+    
+    // Função para definir os tooltips para os pontos de conexão
+    function setConnectionPointTooltips() {
+        document.querySelectorAll('.connection-point').forEach(point => {
+            const [tipo, id] = point.dataset.for.split('-');
+            const section = point.dataset.section;
+            
+            let tooltipText = "";
+            if (connectionMode) {
+                if (selectedElement === point) {
+                    tooltipText = "Clique para cancelar";
+                } else if (selectedElement) {
+                    tooltipText = "Clique para conectar";
+                } else {
+                    tooltipText = "Clique para selecionar";
+                }
+            } else {
+                tooltipText = `${section} (Ponto de conexão)`;
+            }
+            
+            point.setAttribute('data-tooltip', tooltipText);
+        });
+    }
+      // Inicialização
     window.addEventListener('DOMContentLoaded', () => {
         // Posiciona os pontos de conexão
         positionConnectionPoints();
+        
+        // Definir tooltips iniciais
+        setConnectionPointTooltips();
         
         // Carrega conexões existentes
         loadConnections();
@@ -958,16 +1041,14 @@
         bottom: 0;
         width: 0;
         z-index: 5;
-    }
-    
-    /* Container para pontos à esquerda */
+    }    /* Container para pontos à esquerda */
     .connection-points-left {
-        left: -15px;
+        left: -25px; /* Aumentado para acomodar pontos maiores */
     }
     
     /* Container para pontos à direita */
     .connection-points-right {
-        right: -15px;
+        right: -25px; /* Aumentado para acomodar pontos maiores */
     }
     
     /* Para melhor visualização dos pontos de conexão */
@@ -976,11 +1057,10 @@
         padding: 10px 15px;
         cursor: pointer;
         margin: 8px 0;
-    }
-      .connection-point {
+    }      .connection-point {
         position: absolute;
-        width: 12px;
-        height: 12px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
         background-color: white;
         border: 2px solid;
@@ -988,23 +1068,72 @@
         cursor: pointer;
         transform: translateX(-50%); /* Centraliza horizontalmente */
         box-sizing: border-box;
+        transition: all 0.25s ease-in-out;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    }
+      .connection-point:hover {
+        transform: translateX(-50%) scale(1.25);
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+      .connection-point.selected-element {
+        transform: translateX(-50%) scale(1.35);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.9);
+        z-index: 15;
+        border-width: 2.5px;
+    }
+    
+    .connection-point.connection-mode {
+        animation: pulse 1.5s infinite alternate;
+        box-shadow: 0 0 12px rgba(33, 150, 243, 0.7);
+    }
+    
+    @@keyframes pulse {
+        from { 
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 0 5px rgba(33, 150, 243, 0.4);
+        }
+        to { 
+            transform: translateX(-50%) scale(1.2);
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.8);
+        }
     }
       .connection-point[data-section="Competencia"] {
         border-color: #e91e63;
+        box-shadow: 0 0 5px rgba(233, 30, 99, 0.4);
     }
     
     .connection-point[data-section="Avaliacao"] {
         border-color: #2196f3;
+        box-shadow: 0 0 5px rgba(33, 150, 243, 0.4);
     }
     
     .connection-point[data-section="Conteudo"] {
         border-color: #ffc107;
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.4);
     }
     
     .connection-point[data-section="Atividade"] {
         border-color: #4caf50;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
     }
     
+    /* Estilos de hover específicos por seção */
+    .connection-point[data-section="Competencia"]:hover {
+        box-shadow: 0 0 8px rgba(233, 30, 99, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+    
+    .connection-point[data-section="Avaliacao"]:hover {
+        box-shadow: 0 0 8px rgba(33, 150, 243, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+    
+    .connection-point[data-section="Conteudo"]:hover {
+        box-shadow: 0 0 8px rgba(255, 193, 7, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+    
+    .connection-point[data-section="Atividade"]:hover {
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+
     /* Ajustes nas caixas para acomodar o novo layout */
     .edvee-box {
         position: relative;
@@ -1020,5 +1149,94 @@
         border-radius: 4px;
         transition: border-color 0.3s;
         font-size: 14px;
+    }
+
+    /* Estilo para o efeito de clique */
+    .connection-point:active {
+        transform: translateX(-50%) scale(0.9);
+        opacity: 0.8;
+        transition: transform 0.1s, opacity 0.1s;
+    }
+    
+    /* Garantindo que o efeito de hover é restaurado após o clique */
+    .connection-point:active:hover {
+        transform: translateX(-50%) scale(1.1);
+        opacity: 1;
+    }    /* Estilo para indicar quando uma conexão é possível */
+    .connection-point.can-connect {
+        animation: canConnectPulse 1.2s infinite alternate;
+    }
+    
+    @@keyframes canConnectPulse {
+        from { 
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+        to { 
+            transform: translateX(-50%) scale(1.25);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+        }
+    }
+
+    /* Estilo para feedback de conexão bem-sucedida */
+    .connection-point.connection-success {
+        animation: successPulse 1s ease-in-out;
+    }
+    
+    @@keyframes successPulse {
+        0% { 
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        50% { 
+            transform: translateX(-50%) scale(1.4);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+        }
+        100% { 
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+    }
+
+    /* Estilo para tooltips nos pontos de conexão */
+    .connection-point {
+        position: relative;
+    }
+    
+    .connection-point::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: white;
+        text-align: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+        pointer-events: none;
+    }
+    
+    .connection-point:hover::after {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Melhorando a interação visual com os elementos conectáveis */
+    .connectable:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Estilo específico para elementos quando no modo de conexão */
+    .connection-mode .connectable:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
 </style>
