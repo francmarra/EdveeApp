@@ -361,35 +361,65 @@ namespace Edveeeeeee.Controllers
         [HttpPost]
         public IActionResult SaveConnections([FromBody] SaveConnectionsViewModel model)
         {
-            var userId = HttpContext.Session.GetInt32("userId");
-            if (userId == null) return Unauthorized();
-            
-            // Verifica se a UC pertence ao professor atual
-            var uc = _context.UCs.FirstOrDefault(u => u.Id == model.ucId && u.ProfessorId == userId);
-            if (uc == null) return NotFound();
-            
-            // Remove todas as ligações existentes para esta UC
-            var existingConnections = _context.Ligacoes.Where(l => l.UnidadeCurricularId == model.ucId);
-            _context.Ligacoes.RemoveRange(existingConnections);
-            
-            // Adiciona as novas ligações
-            if (model.connections != null && model.connections.Any())
+            try
             {
-                foreach (var conn in model.connections)
+                var userId = HttpContext.Session.GetInt32("userId");
+                if (userId == null)
+                    return Unauthorized(new { success = false, message = "Utilizador não autenticado" });
+
+                // Verifica se a UC pertence ao professor atual
+                var uc = _context.UCs.FirstOrDefault(u => u.Id == model.ucId && u.ProfessorId == userId);
+                if (uc == null)
+                    return NotFound(new { success = false, message = "Unidade Curricular não encontrada" });
+
+                // Adiciona log para depuração
+                System.Diagnostics.Debug.WriteLine($"Salvando {model.connections?.Count ?? 0} conexões para UC {model.ucId}");
+
+                // Remove todas as ligações existentes para esta UC
+                var existingConnections = _context.Ligacoes.Where(l => l.UnidadeCurricularId == model.ucId).ToList();
+                if (existingConnections.Any())
                 {
-                    _context.Ligacoes.Add(new LigacaoEdVee {
-                        UnidadeCurricularId = model.ucId,
-                        OrigemTipo = conn.origemTipo,
-                        OrigemId = Convert.ToInt32(conn.origemId),
-                        DestinoTipo = conn.destinoTipo,
-                        DestinoId = Convert.ToInt32(conn.destinoId)
-                    });
+                    _context.Ligacoes.RemoveRange(existingConnections);
+                    _context.SaveChanges(); // Salva a remoção primeiro
                 }
+
+                // Adiciona as novas ligações, se houver
+                if (model.connections != null && model.connections.Any())
+                {
+                    foreach (var conn in model.connections)
+                    {
+                        // Verificamos se os campos origemId e destinoId podem ser convertidos para int
+                        if (int.TryParse(conn.origemId, out int origemId) &&
+                            int.TryParse(conn.destinoId, out int destinoId))
+                        {
+                            var ligacao = new LigacaoEdVee 
+                            {
+                                UnidadeCurricularId = model.ucId,
+                                OrigemTipo = conn.origemTipo,
+                                OrigemId = origemId,
+                                DestinoTipo = conn.destinoTipo,
+                                DestinoId = destinoId
+                            };
+                            
+                            _context.Ligacoes.Add(ligacao);
+                            System.Diagnostics.Debug.WriteLine($"Adicionada ligação: {conn.origemTipo}-{origemId} -> {conn.destinoTipo}-{destinoId}");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Erro de formato: origemId={conn.origemId}, destinoId={conn.destinoId}");
+                        }
+                    }
+                    
+                    _context.SaveChanges(); // Importante: salva as novas conexões
+                }
+
+                return Ok(new { success = true, message = "Conexões salvas com sucesso" });
             }
-            
-            _context.SaveChanges();
-            
-            return Ok(new { success = true });
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao salvar conexões: {ex.Message}");
+                return StatusCode(500, new { success = false, message = "Erro ao salvar conexões", error = ex.Message });
+            }
         }
     }
 }

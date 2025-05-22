@@ -72,6 +72,16 @@
     // Função para salvar as conexões criadas
     async function saveConnections() {
         try {
+            // Garantir que os IDs sejam números (eles vêm como strings do DOM)
+            const connectionsToSave = currentConnections.map(conn => ({
+                origemTipo: conn.origemTipo,
+                origemId: conn.origemId.toString(), // Garantir que é string (o controller fará a conversão)
+                destinoTipo: conn.destinoTipo,
+                destinoId: conn.destinoId.toString() // Garantir que é string (o controller fará a conversão)
+            }));
+            
+            console.log('Enviando conexões:', connectionsToSave);
+            
             const response = await fetch('/UC/SaveConnections', {
                 method: 'POST',
                 headers: {
@@ -79,18 +89,21 @@
                 },
                 body: JSON.stringify({
                     ucId: @Model.UnidadeCurricular.Id,
-                    connections: currentConnections
+                    connections: connectionsToSave
                 })
             });
+            
+            const result = await response.json();
             
             if (response.ok) {
                 alert('Conexões salvas com sucesso!');
             } else {
-                alert('Erro ao salvar conexões.');
+                alert('Erro ao salvar conexões: ' + (result.message || 'Erro desconhecido'));
+                console.error('Resposta de erro:', result);
             }
         } catch (error) {
             console.error('Erro ao salvar conexões:', error);
-            alert('Erro ao salvar as conexões.');
+            alert('Erro ao salvar conexões. Veja o console para detalhes.');
         }
     }
     
@@ -937,80 +950,98 @@
         font-size: 14px;
         line-height: 1.5; /* Added line height for better readability */
     }
-    
-    .edvee-cell.actions {
+      .edvee-cell.actions {
         flex: none;
         width: 40px;
         white-space: nowrap;
         text-align: right;
-        margin-left: 10px; /* Added margin to separate from content */
+        margin-left: 10px;
+        position: relative;
+        z-index: 10;
     }
     
     .edvee-cell a {
         transition: color 0.3s;
     }
-    
-    /* Dropdown menu styles */
+      /* Dropdown menu styles */
     .dropdown {
         position: relative;
         display: inline-block;
-    }
-
-    .dropbtn {
+    }    .dropbtn {
         background-color: transparent;
-        color: #555;
+        color: #777;
         font-size: 18px;
         font-weight: bold;
         border: none;
         cursor: pointer;
-        padding: 5px 10px;
+        padding: 5px;
         border-radius: 4px;
+        transition: all 0.2s ease;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .dropbtn:hover {
-        background-color: #f1f1f1;
-    }
-
-    .dropdown-content {
+        color: #333;
+        background-color: #f5f5f5;
+    }.dropdown-content {
         display: none;
         position: absolute;
-        right: 0;
-        background-color: #f9f9f9;
+        right: -5px;
+        top: 30px;
+        background-color: white;
         min-width: 120px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        border-radius: 4px;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+        z-index: 200;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #eaeaea;
     }
 
     .dropdown:hover .dropdown-content {
         display: block;
-    }
-
-    .dropdown-content a {
-        color: #333;
-        padding: 8px 12px;
+    }    .dropdown-content a {
+        color: #444;
+        padding: 10px 15px;
         text-decoration: none;
         display: block;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+    
+    .dropdown-content a:last-of-type {
+        border-bottom: none;
     }
 
     .dropdown-content a:hover {
-        background-color: #f1f1f1;
-    }
-
-    .dropdown-btn {
+        background-color: #f8f8f8;
+        color: #000;
+    }    .dropdown-btn {
         background: none;
         border: none;
-        color: #f44336;
+        color: #e53935;
         cursor: pointer;
         font-size: 14px;
-        padding: 8px 12px;
+        padding: 10px 15px;
         width: 100%;
         text-align: left;
+        transition: all 0.2s ease;
+        font-family: inherit;
     }
 
     .dropdown-btn:hover {
-        background-color: #f1f1f1;
+        background-color: #fff2f2;
+        color: #d32f2f;
+    }
+    
+    /* Para deixar o botão de eliminar com estilo adequado */
+    .dropdown-content form:last-child {
+        border-top: none;
     }
     
     /* Button for adding a new component */
@@ -1238,5 +1269,31 @@
     .connection-mode .connectable:hover {
         background-color: rgba(0, 0, 0, 0.05);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }    /* Estilos adicionais para garantir posicionamento adequado do dropdown */
+    .dropdown-content::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        background-color: white;
+        transform: rotate(45deg);
+        border-left: 1px solid #eaeaea;
+        border-top: 1px solid #eaeaea;
+        z-index: -1;
+    }
+    
+    /* Prevenir que o dropdown fique fora da tela em dispositivos móveis */
+    @@media screen and (max-width: 768px) {
+        .dropdown-content {
+            right: 0;
+            min-width: 100px;
+        }
+    }
+    
+    /* Estilização específica para formulários dentro do dropdown */
+    .dropdown-content form {
+        margin: 0;
     }
 </style>
