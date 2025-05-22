@@ -603,24 +603,33 @@
     
     .connectable {
         position: relative;
+        padding: 8px 15px; /* Reduced padding since we're removing the left circles */
         cursor: pointer;
-        transition: all 0.2s;
-        padding: 10px 35px 10px 30px; /* Increased padding for more space */
-        margin: 8px 0; /* More vertical space between items */
-    }
-    
-    .connection-mode {
-        box-shadow: 0 0 0 1px #0066cc;
+        margin: 5px 0;
+        white-space: normal; /* Allow text to wrap */
+        overflow: visible; /* Show all text */
+        line-height: 1.4;
         border-radius: 4px;
+        transition: all 0.2s ease;
     }
     
-    .connection-mode:hover {
-        background-color: rgba(0, 102, 204, 0.1);
+    /* Remove the circle connection point on left */
+    .connectable:before {
+        display: none; /* Hide the circles instead of removing the rule completely */
     }
     
-    .selected-element {
-        background-color: rgba(0, 102, 204, 0.2) !important;
-        box-shadow: 0 0 0 2px #0066cc !important;
+    /* Connection points for anchor lines */
+    .connectable .connection-point-left,
+    .connectable .connection-point-right {
+        display: none; /* Hide the internal connection points */
+    }
+    
+    /* Section-specific colors for connection points - no longer needed since circles are hidden */
+    .connectable[data-section="Competencia"]:before,
+    .connectable[data-section="Avaliacao"]:before,
+    .connectable[data-section="Conteudo"]:before,
+    .connectable[data-section="Atividade"]:before {
+        display: none;
     }
     
     .edvee-matrix {
@@ -645,7 +654,7 @@
     /* Improved connector positioning */
     .connectable {
         position: relative;
-        padding: 8px 30px 8px 25px; /* Increased padding for better space around text */
+        padding: 8px 15px; /* Reduced padding since we're removing the left circles */
         cursor: pointer;
         margin: 5px 0;
         white-space: normal; /* Allow text to wrap */
@@ -655,81 +664,23 @@
         transition: all 0.2s ease;
     }
     
-    /* Circle connection point on left */
+    /* Remove the circle connection point on left */
     .connectable:before {
-        content: '';
-        display: block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        position: absolute;
-        left: 5px;
-        top: 50%;
-        transform: translateY(-50%);
+        display: none; /* Hide the circles instead of removing the rule completely */
     }
     
     /* Connection points for anchor lines */
     .connectable .connection-point-left,
     .connectable .connection-point-right {
-        position: absolute;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        border: 2px solid;
-        opacity: 0.7; /* Semi-visible dots */
+        display: none; /* Hide the internal connection points */
     }
     
-    /* Right connection point */
-    .connectable .connection-point-right {
-        right: 10px;
-        background-color: white;
-    }
-    
-    /* Left connection point */
-    .connectable .connection-point-left {
-        left: 5px;
-        background-color: white;
-    }
-    
-    /* Section-specific colors for connection points */
-    .connectable[data-section="Competencia"]:before {
-        background-color: #e91e63;
-    }
-    
-    .connectable[data-section="Avaliacao"]:before {
-        background-color: #2196f3;
-    }
-    
-    .connectable[data-section="Conteudo"]:before {
-        background-color: #ffc107;
-    }
-    
+    /* Section-specific colors for connection points - no longer needed since circles are hidden */
+    .connectable[data-section="Competencia"]:before,
+    .connectable[data-section="Avaliacao"]:before,
+    .connectable[data-section="Conteudo"]:before,
     .connectable[data-section="Atividade"]:before {
-        background-color: #4caf50;
-    }
-    
-    /* Connection point colors */
-    .connectable[data-section="Competencia"] .connection-point-right,
-    .connectable[data-section="Competencia"] .connection-point-left {
-        border-color: #e91e63;
-    }
-    
-    .connectable[data-section="Avaliacao"] .connection-point-right,
-    .connectable[data-section="Avaliacao"] .connection-point-left {
-        border-color: #2196f3;
-    }
-    
-    .connectable[data-section="Conteudo"] .connection-point-right,
-    .connectable[data-section="Conteudo"] .connection-point-left {
-        border-color: #ffc107;
-    }
-    
-    .connectable[data-section="Atividade"] .connection-point-right,
-    .connectable[data-section="Atividade"] .connection-point-left {
-        border-color: #4caf50;
+        display: none;
     }
     
     .edvee-box {
