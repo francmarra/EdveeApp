@@ -556,32 +556,32 @@
     }    .edvee-matrix {
         display: flex;
         flex-direction: column;
-        gap: 40px; /* Aumentar espaço entre as linhas para evitar sobreposição */
+        gap: 60px; /* Increased gap between rows */
         margin-top: 30px;
         background: transparent;
         position: relative; 
         overflow: visible;
         width: 100%;
-        padding-bottom: 50px; /* Adicionar espaço na parte inferior para acomodar as linhas */
+        padding-bottom: 80px; /* Added more space at bottom */
     }.edvee-row {
         display: flex;
         justify-content: space-between;
         position: relative;
-        gap: 20px;
-    }/* Ajuste para melhorar o posicionamento dos círculos de conexão */
+        gap: 80px; /* Increased horizontal gap between sections */
+    }/* Improved connector positioning */
     .connectable {
         position: relative;
-        padding-left: 20px; /* Espaço para o círculo de conexão à esquerda */
-        padding-right: 25px; /* Espaço para o círculo de conexão à direita */
+        padding: 8px 30px 8px 25px; /* Increased padding for better space around text */
         cursor: pointer;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        box-sizing: border-box;
+        margin: 5px 0;
+        white-space: normal; /* Allow text to wrap */
+        overflow: visible; /* Show all text */
+        line-height: 1.4;
+        border-radius: 4px;
+        transition: all 0.2s ease;
     }
     
-    /* Círculo de conexão à esquerda */
+    /* Circle connection point on left */
     .connectable:before {
         content: '';
         display: block;
@@ -589,37 +589,38 @@
         height: 12px;
         border-radius: 50%;
         position: absolute;
-        left: 0;
+        left: 5px;
         top: 50%;
         transform: translateY(-50%);
     }
-      /* Pontos de conexão para serem usados como pontos de ancoragem para as linhas */
+    
+    /* Connection points for anchor lines */
     .connectable .connection-point-left,
     .connectable .connection-point-right {
         position: absolute;
-        width: 8px;
-        height: 8px;
+        width: 10px;
+        height: 10px;
         border-radius: 50%;
         top: 50%;
         transform: translateY(-50%);
         z-index: 10;
         border: 2px solid;
+        opacity: 0.7; /* Semi-visible dots */
     }
     
-    /* Círculo de conexão à direita - visível */
+    /* Right connection point */
     .connectable .connection-point-right {
-        right: 5px;
+        right: 10px;
         background-color: white;
     }
     
-    /* Ponto de conexão à esquerda - visível, para ancorar linhas */
+    /* Left connection point */
     .connectable .connection-point-left {
-        left: 0;
+        left: 5px;
         background-color: white;
-        opacity: 0; /* Invisível, mas mantém a estrutura para ancorar as linhas */
     }
     
-    /* Cores específicas para os círculos de conexão baseado na seção */
+    /* Section-specific colors for connection points */
     .connectable[data-section="Competencia"]:before {
         background-color: #e91e63;
     }
@@ -636,25 +637,25 @@
         background-color: #4caf50;
     }
     
-    /* Cores específicas para os pontos de conexão à direita */
-    .connectable[data-section="Competencia"] .connection-point-right {
+    /* Connection point colors */
+    .connectable[data-section="Competencia"] .connection-point-right,
+    .connectable[data-section="Competencia"] .connection-point-left {
         border-color: #e91e63;
-        background-color: white;
     }
     
-    .connectable[data-section="Avaliacao"] .connection-point-right {
+    .connectable[data-section="Avaliacao"] .connection-point-right,
+    .connectable[data-section="Avaliacao"] .connection-point-left {
         border-color: #2196f3;
-        background-color: white;
     }
     
-    .connectable[data-section="Conteudo"] .connection-point-right {
+    .connectable[data-section="Conteudo"] .connection-point-right,
+    .connectable[data-section="Conteudo"] .connection-point-left {
         border-color: #ffc107;
-        background-color: white;
     }
     
-    .connectable[data-section="Atividade"] .connection-point-right {
+    .connectable[data-section="Atividade"] .connection-point-right,
+    .connectable[data-section="Atividade"] .connection-point-left {
         border-color: #4caf50;
-        background-color: white;
     }
 
     .edvee-box {
@@ -664,7 +665,8 @@
         border-radius: 6px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         overflow: visible; /* Alterado de hidden para visible para permitir que as conexões sejam visíveis */
-        min-width: 45%;
+        min-width: 40%; /* Slightly reduced to allow more space between boxes */
+        max-width: 45%; /* Add max-width to maintain proportions */
         margin-bottom: 20px;
         z-index: 1; /* Garante que as caixas fiquem abaixo das linhas de conexão */
     }
@@ -705,9 +707,10 @@
         .edvee-table .edvee-row {
             display: flex;
             border-bottom: 1px solid #eee;
-            padding: 8px 0;
+            padding: 10px 0; /* Increased vertical padding */
             align-items: center;
             transition: background 0.3s;
+            gap: 10px; /* Added gap between cells in a row */
         }
 
             .edvee-table .edvee-row:hover {

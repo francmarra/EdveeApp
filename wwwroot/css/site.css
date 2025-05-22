@@ -95,7 +95,7 @@ body {
     font-size: 14px;
 }
 
-/* Tabela básica */
+/* Tabela bï¿½sica */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -171,3 +171,91 @@ th {
     .btn-edvee:hover {
         background-color: #3c5a66;
     }
+
+/* EdVee matrix layout improvements */
+
+.edvee-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 60px; /* Increased gap between rows */
+    margin-top: 40px;
+    background: transparent;
+    position: relative;
+    overflow: visible;
+    width: 100%;
+    padding-bottom: 70px;
+}
+
+.edvee-row {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    gap: 80px; /* Increased horizontal gap between boxes */
+}
+
+.edvee-box {
+    flex: 1;
+    background-color: #fff;
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    overflow: visible;
+    min-width: 45%;
+    margin-bottom: 0;
+    z-index: 1;
+}
+
+/* Distinct colors for different sections */
+.edvee-box.competencias h3 {
+    background-color: #f8d7da; /* Soft pink for Learning Outcomes */
+    color: #333;
+}
+
+.edvee-box.conteudos h3 {
+    background-color: #fff3cd; /* Soft yellow for Content */
+    color: #333;
+}
+
+.edvee-box.avaliacoes h3 {
+    background-color: #e1f0fb; /* Soft blue for Assessments */
+    color: #333;
+}
+
+.edvee-box.atividades h3 {
+    background-color: #e7f6e7; /* Soft green for Learning Activities */
+    color: #333;
+}
+
+/* Improve connection points */
+.connectable {
+    position: relative;
+    padding: 8px 30px 8px 25px; /* Increased padding for better readability */
+    margin: 6px 0;
+    border-radius: 4px;
+}
+
+/* Connection points styling */
+.connection-point-left,
+.connection-point-right {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2px solid #ccc;
+    background-color: white;
+}
+
+.connection-point-left {
+    left: 5px;
+}
+
+.connection-point-right {
+    right: 5px;
+}
+
+/* Improve line visibility */
+.leader-line {
+    z-index: 20 !important;
+}
