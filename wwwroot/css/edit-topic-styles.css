@@ -1,0 +1,295 @@
+/* Estilos para páginas de edição de tópicos - Design Moderno */
+
+.edit-topic-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8eaed;
+}
+
+.edit-topic-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f2f5;
+}
+
+.edit-topic-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.edit-topic-title .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Ícones específicos por tipo */
+.edit-competencia .icon { background: linear-gradient(135deg, #e91e63, #f06292); }
+.edit-conteudo .icon { background: linear-gradient(135deg, #ffc107, #ffeb3b); color: #333 !important; }
+.edit-avaliacao .icon { background: linear-gradient(135deg, #2196f3, #42a5f5); }
+.edit-atividade .icon { background: linear-gradient(135deg, #4caf50, #66bb6a); }
+
+.edit-topic-form {
+    padding: 0;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fafbfc;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    line-height: 1.5;
+    min-height: 54px;
+    resize: vertical;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #4285f4;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-input:hover:not(:focus) {
+    border-color: #c8ced3;
+    background-color: #fff;
+}
+
+/* Inputs específicos por tipo */
+.edit-competencia .form-input:focus {
+    border-color: #e91e63;
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.edit-conteudo .form-input:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+}
+
+.edit-avaliacao .form-input:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.edit-atividade .form-input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid #f0f2f5;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #4285f4, #1976d2);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3);
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
+}
+
+.btn-save:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(66, 133, 244, 0.3);
+}
+
+.btn-cancel {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 2px solid #e9ecef;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-cancel:hover {
+    background: #e9ecef;
+    color: #495057;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+/* Botões específicos por tipo */
+.edit-competencia .btn-save {
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
+}
+
+.edit-competencia .btn-save:hover {
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+}
+
+.edit-conteudo .btn-save {
+    background: linear-gradient(135deg, #ffc107, #f57c00);
+    color: #333;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.edit-conteudo .btn-save:hover {
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.edit-avaliacao .btn-save {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.edit-avaliacao .btn-save:hover {
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+.edit-atividade .btn-save {
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.edit-atividade .btn-save:hover {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+/* Animações */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.edit-topic-container {
+    animation: slideInUp 0.4s ease;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .edit-topic-container {
+        margin: 20px;
+        padding: 16px;
+        border-radius: 8px;
+    }
+    
+    .edit-topic-title {
+        font-size: 24px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Estados de validação */
+.form-input.error {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.form-input.error:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.validation-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 6px;
+    display: block;
+}
+
+/* Loading state */
+.btn-save.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-save.loading::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
