@@ -12,22 +12,22 @@
 
 <!-- Connections Section Start -->
 <div style="background: #f8f9fa; border-radius: 10px; padding: 15px; margin-top: 20px;">
-    <h4>Conexões Entre Secções</h4>
-    <div class="connection-controls">
+    <h4>Conexões Entre Secções</h4>    <div class="connection-controls">
         <button id="toggleConnectionMode" class="btn-connection-mode inactive">Modo de Conexão: DESLIGADO</button>
+        <button id="deleteIndividualConnection" class="btn-delete-individual" style="display: none;">Eliminar Conexão Individual</button>
         <button id="clearConnections" class="btn-clear-connections" style="display: none;">Limpar Conexões</button>
         <button id="saveConnections" class="btn-save-connections" style="display: none;">Salvar Conexões</button>
-    </div>
-    <div class="connection-instructions" style="display:none; margin-top: 10px;">
-        <p>Para criar uma ligação: <b>Clique</b> em um elemento e depois <b>clique</b> em outro elemento para ligar.</p>
+    </div>    <div class="connection-instructions" style="display:none; margin-top: 10px;">
+        <p>Para criar uma ligação: <b>Clique</b> em um ponto de conexão e depois <b>clique</b> em outro ponto para ligar.</p>
+        <p>Para eliminar uma ligação individual: <b>Clique</b> no botão "Eliminar Conexão Individual", depois <b>clique</b> em dois pontos de conexão para eliminar a ligação entre eles.</p>
     </div>
 </div>
 
 <!-- LeaderLine CDN -->
 <script src="https://cdn.jsdelivr.net/npm/leader-line@1.0.7/leader-line.min.js"></script>
-<script>
-    // Variáveis para controle de ligações
+<script>    // Variáveis para controle de ligações
     let connectionMode = false;
+    let deleteMode = false;
     let selectedElement = null;
     let lines = [];
     let currentConnections = [];
@@ -244,23 +244,24 @@
         }
         
         return color;
-    }
-    
-    // Função para limpar todas as linhas
+    }    // Função para limpar todas as linhas
     function clearLines() {
         lines.forEach(line => line.remove());
         lines = [];
-        // Mantém as conexões para que possamos restaurá-las ao sair do modo de conexão
-        if (connectionMode) {
-            currentConnections = [];
-        }
+        // Só limpa as conexões se foi um clear manual (não automático do modo)
     }
     
-    // Função para ativar/desativar o modo de conexão
+    // Função para limpar tudo (linhas e conexões)
+    function clearAllConnections() {
+        lines.forEach(line => line.remove());
+        lines = [];
+        currentConnections = [];
+    }    // Função para ativar/desativar o modo de conexão
     function toggleConnectionMode() {
         connectionMode = !connectionMode;
         const button = document.getElementById('toggleConnectionMode');
         const instructions = document.querySelector('.connection-instructions');
+        const deleteBtn = document.getElementById('deleteIndividualConnection');
         const clearBtn = document.getElementById('clearConnections');
         const saveBtn = document.getElementById('saveConnections');
         
@@ -269,9 +270,28 @@
             button.classList.add('active');
             button.classList.remove('inactive');
             instructions.style.display = 'block';
+            deleteBtn.style.display = 'inline-block';
             clearBtn.style.display = 'inline-block';
             saveBtn.style.display = 'inline-block';
-              // Adiciona classe de destaque aos pontos de conexão
+            
+            // Desativa modo de eliminação se estiver ativo
+            if (deleteMode) {
+                deleteMode = false;
+                const deleteModeBtn = document.getElementById('deleteIndividualConnection');
+                deleteModeBtn.textContent = 'Eliminar Conexão Individual';
+                deleteModeBtn.style.backgroundColor = '#f44336';
+                
+                // Remove classes de modo de eliminação
+                document.querySelectorAll('.connection-point').forEach(el => {
+                    el.classList.remove('delete-mode');
+                    el.classList.remove('selected-element');
+                });
+                
+                // Restaura aparência normal das linhas
+                restoreNormalConnections();
+            }
+            
+            // Adiciona classe de destaque aos pontos de conexão
             document.querySelectorAll('.connection-point').forEach(el => {
                 el.classList.add('connection-mode');
             });
@@ -283,25 +303,137 @@
             button.classList.remove('active');
             button.classList.add('inactive');
             instructions.style.display = 'none';
+            deleteBtn.style.display = 'none';
             clearBtn.style.display = 'none';
             saveBtn.style.display = 'none';
             selectedElement = null;
+            deleteMode = false;
             
             // Remove classe de destaque
             document.querySelectorAll('.connection-point').forEach(el => {
                 el.classList.remove('connection-mode');
                 el.classList.remove('selected-element');
+                el.classList.remove('can-connect');
+                el.classList.remove('delete-mode');
             });
             
             // Atualiza os tooltips
             setConnectionPointTooltips();
             
-            // Renderiza novamente as conexões existentes
+            // Renderiza novamente as conexões existentes (sem perder dados)
             renderStoredConnections();
         }
     }
+      // Função para ativar/desativar o modo de eliminação individual
+    function toggleDeleteMode() {
+        deleteMode = !deleteMode;
+        const button = document.getElementById('deleteIndividualConnection');
+        
+        if (deleteMode) {
+            button.textContent = 'Cancelar Eliminação';
+            button.style.backgroundColor = '#ff9800';
+            connectionMode = false; // Desativa modo de conexão
+            selectedElement = null;
+            
+            // Remove classes dos pontos de conexão
+            document.querySelectorAll('.connection-point').forEach(el => {
+                el.classList.remove('connection-mode');
+                el.classList.remove('selected-element');
+                el.classList.remove('can-connect');
+                el.classList.add('delete-mode'); // Adiciona classe para modo de eliminação
+            });
+            
+            // Muda a aparência das linhas para indicar que podem ser eliminadas
+            highlightDeletableConnections();
+            
+            setConnectionPointTooltips();
+        } else {
+            button.textContent = 'Eliminar Conexão Individual';
+            button.style.backgroundColor = '#f44336';
+            selectedElement = null;
+            
+            // Remove classes de modo de eliminação
+            document.querySelectorAll('.connection-point').forEach(el => {
+                el.classList.remove('delete-mode');
+                el.classList.remove('selected-element');
+            });
+            
+            // Restaura aparência normal das linhas
+            restoreNormalConnections();
+        }
+    }    // Função para eliminar uma conexão específica entre dois pontos
+    function deleteConnectionBetweenPoints(ponto1, ponto2) {
+        console.log('Procurando conexão entre:', ponto1.dataset.for, 'e', ponto2.dataset.for);
+        
+        const [tipo1, id1] = ponto1.dataset.for.split('-');
+        const [tipo2, id2] = ponto2.dataset.for.split('-');
+        
+        // Procura a conexão nos dois sentidos possíveis
+        let connectionIndex = -1;
+        
+        connectionIndex = currentConnections.findIndex(conn => 
+            (conn.origemTipo === tipo1 && conn.origemId == id1 && 
+             conn.destinoTipo === tipo2 && conn.destinoId == id2) ||
+            (conn.origemTipo === tipo2 && conn.origemId == id2 && 
+             conn.destinoTipo === tipo1 && conn.destinoId == id1)
+        );
+        
+        if (connectionIndex !== -1) {
+            console.log(`Conexão encontrada no índice ${connectionIndex}:`, currentConnections[connectionIndex]);
+            
+            // Remove a linha visual
+            const lineToRemove = lines[connectionIndex];
+            lineToRemove.remove();
+            lines.splice(connectionIndex, 1);
+            
+            // Remove da lista de conexões
+            currentConnections.splice(connectionIndex, 1);
+            
+            console.log(`Conexão eliminada. Restam ${lines.length} linhas e ${currentConnections.length} conexões`);
+            
+            // Restaura aparência das linhas restantes
+            if (deleteMode) {
+                highlightDeletableConnections();
+            }
+            
+            showCustomPopup('Conexão eliminada com sucesso!', 'success');
+            return true;
+        } else {
+            console.log('Nenhuma conexão encontrada entre estes pontos');
+            showCustomPopup('Não existe conexão entre estes pontos!', 'error');
+            return false;
+        }
+    }
     
-    // Função para renderizar as conexões armazenadas sem limpar a lista atual
+    // Função para destacar conexões que podem ser eliminadas
+    function highlightDeletableConnections() {
+        lines.forEach(line => {
+            line.setOptions({
+                size: 4,
+                color: '#ff5722',
+                dash: {animation: true, len: 8, gap: 4}
+            });
+        });
+    }
+    
+    // Função para restaurar aparência normal das conexões
+    function restoreNormalConnections() {
+        lines.forEach((line, index) => {
+            const conn = currentConnections[index];
+            if (conn) {
+                const origemElement = document.querySelector(`[data-id="${conn.origemTipo}-${conn.origemId}"]`);
+                const destinoElement = document.querySelector(`[data-id="${conn.destinoTipo}-${conn.destinoId}"]`);
+                if (origemElement && destinoElement) {
+                    const originalColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
+                    line.setOptions({
+                        size: 2.5,
+                        color: originalColor,
+                        dash: {animation: true}
+                    });
+                }
+            }
+        });
+    }    // Função para renderizar as conexões armazenadas sem limpar a lista atual
     function renderStoredConnections() {
         // Limpa apenas as linhas visuais, mantendo as conexões armazenadas
         lines.forEach(line => line.remove());
@@ -318,7 +450,9 @@
                 const destinoPoint = document.querySelector(`.connection-point[data-for="${conn.destinoTipo}-${conn.destinoId}"]`);
                 
                 if (origemPoint && destinoPoint) {
-                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);                      // Cria a linha visual
+                    let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
+                    
+                    // Cria a linha visual
                     const line = new LeaderLine(
                         origemPoint,
                         destinoPoint,
@@ -341,6 +475,11 @@
                 }
             }
         });
+        
+        // Se estamos em modo de eliminação, aplica os estilos visuais
+        if (deleteMode) {
+            highlightDeletableConnections();
+        }
     }
     
     // Função para limpar o estado de "pode conectar" de todos os pontos
@@ -378,15 +517,39 @@
                 el.classList.add('can-connect');
             }
         });
-    }
-    
-    // Manipulador de clique para selecionar elementos
+    }    // Manipulador de clique para selecionar elementos
     function handleConnectionPointClick(e) {
-        if (!connectionMode) return;
-        
         const element = e.currentTarget;
         const connectableId = element.dataset.for;
-          if (!selectedElement) {
+        
+        // Se estamos em modo de eliminação
+        if (deleteMode) {
+            if (!selectedElement) {
+                // Primeira seleção para eliminação
+                selectedElement = element;
+                element.classList.add('selected-element');
+                setConnectionPointTooltips();
+            } else if (selectedElement === element) {
+                // Clicou no mesmo elemento - deseleciona
+                selectedElement.classList.remove('selected-element');
+                selectedElement = null;
+                setConnectionPointTooltips();
+            } else {
+                // Segunda seleção - tenta eliminar conexão
+                const sucesso = deleteConnectionBetweenPoints(selectedElement, element);
+                
+                // Limpa a seleção independentemente do resultado
+                selectedElement.classList.remove('selected-element');
+                selectedElement = null;
+                setConnectionPointTooltips();
+            }
+            return;
+        }
+        
+        // Lógica original para modo de conexão
+        if (!connectionMode) return;
+        
+        if (!selectedElement) {
             // Primeira seleção
             selectedElement = element;
             element.classList.add('selected-element');
@@ -423,8 +586,11 @@
                        conn.destinoTipo === destinoTipo
             );
             
-            if (!existingConnection && origemElement && destinoElement) {                // Define a cor da linha baseada nas seções
-                let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);                    // Cria a linha visual simples
+            if (!existingConnection && origemElement && destinoElement) {
+                // Define a cor da linha baseada nas seções
+                let lineColor = getLineColor(origemElement.dataset.section, destinoElement.dataset.section);
+                
+                // Cria a linha visual simples
                 const line = new LeaderLine(
                     origem,
                     destino,
@@ -439,7 +605,8 @@
                         startSocketGravity: 0,
                         endSocketGravity: 0,
                         startPlugSize: 1, // Tamanho reduzido para melhor alinhamento
-                        endPlugSize: 1    // Tamanho reduzido para melhor alinhamento
+                        endPlugSize: 1,   // Tamanho reduzido para melhor alinhamento
+                        dash: {animation: true}
                     }
                 );
                 lines.push(line);
@@ -474,16 +641,22 @@
                 el.classList.remove('connection-success');
             }, 1000);
         });
-    }
-    
-    // Função para definir os tooltips para os pontos de conexão
+    }    // Função para definir os tooltips para os pontos de conexão
     function setConnectionPointTooltips() {
         document.querySelectorAll('.connection-point').forEach(point => {
             const [tipo, id] = point.dataset.for.split('-');
             const section = point.dataset.section;
             
             let tooltipText = "";
-            if (connectionMode) {
+            if (deleteMode) {
+                if (selectedElement === point) {
+                    tooltipText = "Clique para cancelar seleção";
+                } else if (selectedElement) {
+                    tooltipText = "Clique para eliminar conexão";
+                } else {
+                    tooltipText = "Clique para selecionar ponto de eliminação";
+                }
+            } else if (connectionMode) {
                 if (selectedElement === point) {
                     tooltipText = "Clique para cancelar";
                 } else if (selectedElement) {
@@ -508,11 +681,10 @@
         
         // Carrega conexões existentes
         loadConnections();
-        
-        // Configura handlers dos botões
+          // Configura handlers dos botões
         document.getElementById('toggleConnectionMode').addEventListener('click', toggleConnectionMode);
-        document.getElementById('clearConnections').addEventListener('click', () => {
-            clearLines();
+        document.getElementById('deleteIndividualConnection').addEventListener('click', toggleDeleteMode);        document.getElementById('clearConnections').addEventListener('click', () => {
+            clearAllConnections();
             if (!connectionMode) {
                 renderStoredConnections();
             }
@@ -824,8 +996,7 @@
         border-radius: 4px;
         text-decoration: none;
     }
-    
-    .btn-connection-mode, .btn-clear-connections, .btn-save-connections {
+      .btn-connection-mode, .btn-clear-connections, .btn-save-connections, .btn-delete-individual {
         padding: 8px 14px;
         border-radius: 4px;
         border: none;
@@ -850,6 +1021,15 @@
     
     #toggleConnectionMode.inactive {
         background-color: #5a5a5a;
+    }
+    
+    .btn-delete-individual {
+        background-color: #f44336;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-delete-individual:hover {
+        background-color: #d32f2f;
     }
     
     .btn-clear-connections {
@@ -1261,6 +1441,27 @@
     .connection-point.can-connect {
         box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
         border-width: 3px;
+    }
+
+    /* Estilo para modo de eliminação */
+    .connection-point.delete-mode {
+        box-shadow: 0 0 10px rgba(255, 87, 34, 0.7);
+        border-width: 3px;
+        animation: deleteModePulse 2s infinite;
+    }
+
+    .connection-point.delete-mode.selected-element {
+        box-shadow: 0 0 15px rgba(255, 87, 34, 0.9);
+        transform: translateX(-50%) scale(1.4);
+    }
+
+    @@keyframes deleteModePulse {
+        0%, 100% { 
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.7);
+        }
+        50% { 
+            box-shadow: 0 0 15px rgba(255, 87, 34, 0.9);
+        }
     }
 
     /* Estilo para feedback de conexão bem-sucedida */
