@@ -1095,16 +1095,15 @@
         border-radius: 50%;
         background-color: white;
         border: 2px solid;
-        z-index: 10;
-        cursor: pointer;
+        z-index: 10;        cursor: pointer;
         transform: translateX(-50%); /* Centraliza horizontalmente */
         box-sizing: border-box;
-        transition: all 0.25s ease-in-out;
+        transition: all 0.3s ease-in-out;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-    }
-      .connection-point:hover {
-        transform: translateX(-50%) scale(1.25);
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }    .connection-point:hover {
+        transform: translateX(-50%) scale(1.5);
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.9);
+        z-index: 15;
     }
       .connection-point.selected-element {
         transform: translateX(-50%) scale(1.35);
@@ -1112,21 +1111,9 @@
         z-index: 15;
         border-width: 2.5px;
     }
-    
-    .connection-point.connection-mode {
-        animation: pulse 1.5s infinite alternate;
-        box-shadow: 0 0 12px rgba(33, 150, 243, 0.7);
-    }
-    
-    @@keyframes pulse {
-        from { 
-            transform: translateX(-50%) scale(1);
-            box-shadow: 0 0 5px rgba(33, 150, 243, 0.4);
-        }
-        to { 
-            transform: translateX(-50%) scale(1.2);
-            box-shadow: 0 0 15px rgba(33, 150, 243, 0.8);
-        }
+      .connection-point.connection-mode {
+        box-shadow: 0 0 8px rgba(33, 150, 243, 0.6);
+        border-width: 2.5px;
     }
       .connection-point[data-section="Competencia"] {
         border-color: #e91e63;
@@ -1147,22 +1134,25 @@
         border-color: #4caf50;
         box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
     }
-    
-    /* Estilos de hover específicos por seção */
+      /* Estilos de hover específicos por seção */
     .connection-point[data-section="Competencia"]:hover {
-        box-shadow: 0 0 8px rgba(233, 30, 99, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+        transform: translateX(-50%) scale(1.6);
+        box-shadow: 0 0 15px rgba(233, 30, 99, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
     }
     
     .connection-point[data-section="Avaliacao"]:hover {
-        box-shadow: 0 0 8px rgba(33, 150, 243, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+        transform: translateX(-50%) scale(1.6);
+        box-shadow: 0 0 15px rgba(33, 150, 243, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
     }
     
     .connection-point[data-section="Conteudo"]:hover {
-        box-shadow: 0 0 8px rgba(255, 193, 7, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+        transform: translateX(-50%) scale(1.6);
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
     }
     
     .connection-point[data-section="Atividade"]:hover {
-        box-shadow: 0 0 8px rgba(76, 175, 80, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.8);
+        transform: translateX(-50%) scale(1.6);
+        box-shadow: 0 0 15px rgba(76, 175, 80, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
     }
 
     /* Ajustes nas caixas para acomodar o novo layout */
@@ -1195,18 +1185,8 @@
         opacity: 1;
     }    /* Estilo para indicar quando uma conexão é possível */
     .connection-point.can-connect {
-        animation: canConnectPulse 1.2s infinite alternate;
-    }
-    
-    @@keyframes canConnectPulse {
-        from { 
-            transform: translateX(-50%) scale(1.1);
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
-        }
-        to { 
-            transform: translateX(-50%) scale(1.25);
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
-        }
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+        border-width: 3px;
     }
 
     /* Estilo para feedback de conexão bem-sucedida */
