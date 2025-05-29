@@ -1084,37 +1084,31 @@
     .connectable[data-section="Conteudo"]:before,
     .connectable[data-section="Atividade"]:before {
         display: none;
-    }
-    
-    .edvee-matrix {
+    }    .edvee-matrix {
         display: flex;
         flex-direction: column;
-        gap: 80px; /* Significantly increased gap between rows to match the image */
-        margin-top: 30px;
+        gap: 25px; /* Further reduced from 40px for much more compact layout */
+        margin-top: 15px; /* Further reduced from 20px */
         background: transparent;
         position: relative; 
         overflow: visible;
         width: 100%;
-        padding-bottom: 100px; /* Added more space at bottom */
-    }
-    
-    .edvee-row {
+        padding-bottom: 40px; /* Further reduced from 60px */
+    }    .edvee-row {
         display: flex;
         justify-content: space-between;
         position: relative;
-        gap: 100px; /* Significantly increased horizontal gap between sections */
-    }
-    
-    /* Improved connector positioning */
+        gap: 40px; /* Slightly increased gap to accommodate narrower boxes */
+    }/* Improved connector positioning */
     .connectable {
         position: relative;
-        padding: 8px 15px; /* Reduced padding since we're removing the left circles */
+        padding: 4px 8px; /* Much more compact padding */
         cursor: pointer;
-        margin: 5px 0;
+        margin: 2px 0; /* Minimal margin */
         white-space: normal; /* Allow text to wrap */
         overflow: visible; /* Show all text */
-        line-height: 1.4;
-        border-radius: 4px;
+        line-height: 1.2; /* Very tight line height */
+        border-radius: 2px; /* Minimal radius */
         transition: all 0.2s ease;
     }
     
@@ -1135,32 +1129,29 @@
     .connectable[data-section="Conteudo"]:before,
     .connectable[data-section="Atividade"]:before {
         display: none;
-    }
-    
-    .edvee-box {
+    }    .edvee-box {
         flex: 1;
         background-color: #fff;
         padding: 0;
-        border-radius: 8px; /* Slightly rounder corners */
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-        overflow: visible; /* Alterado de hidden para visible para permitir que as conexões sejam visíveis */
-        min-width: 40%; /* Slightly reduced to allow more space between boxes */
-        max-width: 45%; /* Add max-width to maintain proportions */
-        margin-bottom: 20px;
-        z-index: 1; /* Garante que as caixas fiquem abaixo das linhas de conexão */
+        border-radius: 4px; /* Further reduced radius */
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06); /* Much lighter shadow */
+        overflow: visible;
+        min-width: 30%; /* Further reduced to make tables even narrower */
+        max-width: 40%; /* Further reduced to make tables even narrower */
+        margin-bottom: 10px; /* Further reduced margin */
+        z-index: 1;
     }
     
     .edvee-box:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Lighter hover shadow */
     }
-    
-    .edvee-box h3 {
+      .edvee-box h3 {
         margin: 0;
-        padding: 15px 20px; /* Increased padding for header */
-        font-size: 18px; /* Larger font size */
+        padding: 8px 12px; /* Further reduced padding */
+        font-size: 14px; /* Smaller font size */
         color: #fff;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
     }
     
     .edvee-box.competencias h3 {
@@ -1177,39 +1168,37 @@
     
     .edvee-box.atividades h3 {
         background-color: #4caf50;
-    }
-    
-    .edvee-table {
+    }    .edvee-table {
         display: flex;
         flex-direction: column;
-        gap: 15px; /* Increased gap between cells */
-        padding: 15px;
+        gap: 5px; /* Further reduced from 8px */
+        padding: 6px; /* Further reduced padding for narrower tables */
     }
-    
-    .edvee-table .edvee-row {
+      .edvee-table .edvee-row {
         display: flex;
         align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
+        padding: 4px 0; /* Further reduced from 6px */
+        border-bottom: 1px solid #f5f5f5; /* Even lighter border */
+    }
+    
+    .edvee-table .edvee-row:last-child {
+        border-bottom: none; /* Remove border from last row */
     }
     
     .edvee-table .edvee-row:hover {
         background: #f9f9f9;
-    }
-    
-    .edvee-cell {
+    }    .edvee-cell {
         flex: 1;
-        padding: 0 8px; /* Increased horizontal padding */
+        padding: 0 3px; /* Further reduced horizontal padding for narrower tables */
         color: #333;
-        font-size: 14px;
-        line-height: 1.5; /* Added line height for better readability */
-    }
-      .edvee-cell.actions {
+        font-size: 12px; /* Even smaller font size */
+        line-height: 1.2; /* Even tighter line height */
+    }    .edvee-cell.actions {
         flex: none;
-        width: 40px;
+        width: 24px; /* Further reduced width for narrower tables */
         white-space: nowrap;
         text-align: right;
-        margin-left: 10px;
+        margin-left: 4px; /* Further reduced margin */
         position: relative;
         z-index: 10;
     }
@@ -1224,15 +1213,15 @@
     }    .dropbtn {
         background-color: transparent;
         color: #777;
-        font-size: 18px;
+        font-size: 16px; /* Slightly smaller for narrower tables */
         font-weight: bold;
         border: none;
         cursor: pointer;
-        padding: 5px;
-        border-radius: 4px;
+        padding: 3px; /* Reduced padding */
+        border-radius: 3px;
         transition: all 0.2s ease;
-        width: 30px;
-        height: 30px;
+        width: 22px; /* Smaller for narrower tables */
+        height: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1334,15 +1323,13 @@
     /* Container para pontos à direita */
     .connection-points-right {
         right: -25px; /* Aumentado para acomodar pontos maiores */
-    }
-    
-    /* Para melhor visualização dos pontos de conexão */
+    }    /* Para melhor visualização dos pontos de conexão */
     .connectable {
         position: relative;
-        padding: 10px 15px;
+        padding: 4px 8px; /* Much more compact padding */
         cursor: pointer;
-        margin: 8px 0;
-    }      .connection-point {
+        margin: 2px 0; /* Minimal margin */
+    }.connection-point {
         position: absolute;
         width: 18px;
         height: 18px;
@@ -1646,5 +1633,87 @@
 
     .custom-popup.error .popup-close-btn:hover {
         background-color: #da190b;
+    }    /* Additional compact styling overrides */
+    .add-topic-container {
+        padding: 5px !important; /* Even more compact */
+    }
+    
+    .add-topic-btn {
+        padding: 5px 8px !important; /* More compact button */
+        font-size: 11px !important; /* Even smaller font */
+        border-radius: 3px !important;
+    }
+    
+    .add-topic-form {
+        margin-top: 6px !important;
+        padding: 8px !important; /* Further reduced */
+    }
+    
+    .add-topic-form textarea {
+        min-height: 45px !important; /* Even smaller textarea */
+        padding: 5px 8px !important;
+        font-size: 11px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .btn-cancel, .btn-confirm {
+        padding: 4px 10px !important; /* Even smaller buttons */
+        font-size: 11px !important;
+        min-width: 65px !important;
+    }
+    
+    /* Further reduce connection point container spacing */
+    .connection-points-left {
+        left: -16px; /* Further reduced for narrower tables */
+    }
+    
+    .connection-points-right {
+        right: -16px; /* Further reduced for narrower tables */
+    }
+    
+    .connection-point {
+        width: 12px; /* Further reduced for narrower tables */
+        height: 12px; /* Further reduced for narrower tables */
+    }
+    
+    /* Make dropdowns more compact */
+    .dropbtn {
+        width: 20px !important; /* Even smaller dropdown button */
+        height: 20px !important;
+        font-size: 14px !important;
+    }
+    
+    .dropdown-content {
+        min-width: 90px; /* Even narrower dropdown */
+    }
+    
+    .dropdown-content a {
+        padding: 6px 10px; /* Further reduced padding */
+        font-size: 12px;
+    }
+    
+    .dropdown-btn {
+        padding: 6px 10px; /* Further reduced padding */
+        font-size: 12px;
+    }
+    
+    /* Make the entire layout more condensed */
+    .connection-instructions {
+        padding: 6px; /* Further reduced instruction padding */
+        margin-bottom: 10px;
+        font-size: 13px; /* Smaller instruction text */
+    }
+    
+    .connection-controls {
+        margin: 10px 0; /* Further reduced control margins */
+        gap: 6px;
+    }
+    
+    /* Optimize connectable elements for narrower tables */
+    .connectable {
+        padding: 3px 6px !important; /* Even more compact */
+        margin: 1px 0 !important; /* Minimal margin */
+        font-size: 11px !important; /* Smaller text */
+        line-height: 1.1 !important; /* Very tight line height */
     }
 </style>
