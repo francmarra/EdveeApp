@@ -1,9 +1,9 @@
 ﻿@model Edveeeeeee.Models.UnidadeCurricular
 
 <h2 class="form-title">Editar Unidade Curricular</h2>
-<div class="card">
-    <form asp-action="Edit" method="post">
+<div class="card">    <form asp-action="EditUC" method="post">
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ProfessorId" />
         <div class="form-group">
             <label for="Nome">Nome</label>
             <input type="text" id="Nome" asp-for="Nome" class="form-control" placeholder="Digite o nome" required />

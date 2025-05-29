@@ -248,12 +248,18 @@ namespace Edveeeeeee.Controllers
             var uc = _context.UCs.FirstOrDefault(x => x.Id == id);
             if (uc == null) return NotFound();
             return View(uc);
-        }
-
-        [HttpPost]
+        }        [HttpPost]
         public IActionResult Edit(UnidadeCurricular uc)
         {
-            _context.UCs.Update(uc);
+            var existingUc = _context.UCs.FirstOrDefault(u => u.Id == uc.Id);
+            if (existingUc == null) return NotFound();
+
+            // Update only the fields that should be editable, preserving ProfessorId
+            existingUc.Nome = uc.Nome;
+            existingUc.Codigo = uc.Codigo;
+            existingUc.Turmas = uc.Turmas;
+            existingUc.Descricao = uc.Descricao;
+
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
