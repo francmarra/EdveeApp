@@ -1,0 +1,11 @@
+/* EdVee Main CSS - Modular CSS file that imports all EdVee components */
+
+/* Import all EdVee modules in logical order */
+@import url('edvee/base.css');
+@import url('edvee/connection-controls.css');
+@import url('edvee/layout.css');
+@import url('edvee/dropdowns.css');
+@import url('edvee/connection-points.css');
+@import url('edvee/interactions.css');
+@import url('edvee/popups.css');
+@import url('edvee/responsive.css');

@@ -1,0 +1,110 @@
+/* EdVee Layout - Matrix layout, boxes, and table styles */
+
+/* EdVee Matrix Layout */
+.edvee-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 15px;
+    background: transparent;
+    position: relative; 
+    overflow: visible;
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.edvee-row {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    gap: 40px;
+}
+
+/* EdVee Boxes */
+.edvee-box {
+    flex: 1;
+    background-color: #fff;
+    padding: 0;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    overflow: visible;
+    min-width: 30%;
+    max-width: 40%;
+    margin-bottom: 10px;
+    z-index: 1;
+    position: relative;
+}
+
+.edvee-box:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.edvee-box h3 {
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #fff;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.edvee-box.competencias h3 {
+    background-color: #e91e63;
+}
+
+.edvee-box.avaliacoes h3 {
+    background-color: #2196f3;
+}
+
+.edvee-box.conteudos h3 {
+    background-color: #ffc107;
+}
+
+.edvee-box.atividades h3 {
+    background-color: #4caf50;
+}
+
+/* EdVee Table Styles */
+.edvee-table {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px;
+}
+
+.edvee-table .edvee-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.edvee-table .edvee-row:last-child {
+    border-bottom: none;
+}
+
+.edvee-table .edvee-row:hover {
+    background: #f9f9f9;
+}
+
+.edvee-cell {
+    flex: 1;
+    padding: 0 3px;
+    color: #333;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.edvee-cell.actions {
+    flex: none;
+    width: 24px;
+    white-space: nowrap;
+    text-align: right;
+    margin-left: 4px;
+    position: relative;
+    z-index: 10;
+}
+
+.edvee-cell a {
+    transition: color 0.3s;
+}

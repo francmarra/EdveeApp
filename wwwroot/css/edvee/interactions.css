@@ -1,0 +1,98 @@
+/* EdVee Interactions - Hover effects, animations, and tooltips */
+
+/* Connection Point Interaction Effects */
+.connection-point:active {
+    transform: translateX(-50%) scale(0.9);
+    opacity: 0.8;
+    transition: transform 0.1s, opacity 0.1s;
+}
+
+.connection-point:active:hover {
+    transform: translateX(-50%) scale(1.1);
+    opacity: 1;
+}
+
+.connection-point.can-connect {
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+    border-width: 3px;
+}
+
+.connection-point.delete-mode {
+    box-shadow: 0 0 10px rgba(255, 87, 34, 0.7);
+    border-width: 3px;
+    animation: deleteModePulse 2s infinite;
+}
+
+.connection-point.delete-mode.selected-element {
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.9);
+    transform: translateX(-50%) scale(1.4);
+}
+
+@keyframes deleteModePulse {
+    0%, 100% { 
+        box-shadow: 0 0 10px rgba(255, 87, 34, 0.7);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(255, 87, 34, 0.9);
+    }
+}
+
+.connection-point.connection-success {
+    animation: successPulse 1s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% { 
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+    50% { 
+        transform: translateX(-50%) scale(1.4);
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+    }
+    100% { 
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+}
+
+/* Tooltips */
+.connection-point {
+    position: relative;
+}
+
+.connection-point::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    pointer-events: none;
+}
+
+.connection-point:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Connectable Element Interactions */
+.connectable:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.connection-mode .connectable:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}

@@ -1,0 +1,191 @@
+@model Edveeeeeee.Models.ViewModels.EdVeeViewModel
+
+<div class="edvee-matrix">
+    <div class="edvee-row">
+        <!-- Competências -->
+        <div class="edvee-box competencias">
+            <h3>Competências</h3>
+            <div class="edvee-table">
+                @foreach (var c in Model.Competencias)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Competencia-@c.Id" data-section="Competencia">
+                                @c.Texto
+                            </div>
+                            <!-- Pontos de conexão à direita -->
+                            <div class="connection-point-container connection-points-right">
+                                <div class="connection-point" data-section="Competencia" data-for="Competencia-@c.Id"></div>
+                            </div>
+                        </div>
+                        <div class="edvee-cell actions">
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditCompetencia/@c.Id">Editar</a>
+                                    <form asp-action="DeleteCompetencia" method="post">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-competencia-form">+ Nova Competência</button>
+                <div id="add-competencia-form" class="add-topic-form">
+                    <form asp-action="AddCompetencia" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva a nova competência..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avaliação -->
+        <div class="edvee-box avaliacoes">
+            <h3>Avaliação</h3>
+            <div class="edvee-table">
+                @foreach (var a in Model.Avaliacoes)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
+                            <!-- Pontos de conexão à esquerda -->
+                            <div class="connection-point-container connection-points-left">
+                                <div class="connection-point" data-section="Avaliacao" data-for="Avaliacao-@a.Id"></div>
+                            </div>
+                            <div class="connectable" data-id="Avaliacao-@a.Id" data-section="Avaliacao">
+                                @a.Texto
+                            </div>
+                        </div>
+                        <div class="edvee-cell actions">
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditAvaliacao/@a.Id">Editar</a>
+                                    <form asp-action="DeleteAvaliacao" method="post">
+                                        <input type="hidden" name="id" value="@a.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-avaliacao-form">+ Nova Avaliação</button>
+                <div id="add-avaliacao-form" class="add-topic-form">
+                    <form asp-action="AddAvaliacao" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva a nova avaliação..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="edvee-row">
+        <!-- Conteúdos -->
+        <div class="edvee-box conteudos">
+            <h3>Conteúdos</h3>
+            <div class="edvee-table">
+                @foreach (var c in Model.Conteudos)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
+                            <div class="connectable" data-id="Conteudo-@c.Id" data-section="Conteudo">
+                                @c.Texto
+                            </div>
+                            <!-- Pontos de conexão à direita -->
+                            <div class="connection-point-container connection-points-right">
+                                <div class="connection-point" data-section="Conteudo" data-for="Conteudo-@c.Id"></div>
+                            </div>
+                        </div>
+                        <div class="edvee-cell actions">
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditConteudo/@c.Id">Editar</a>
+                                    <form asp-action="DeleteConteudo" method="post">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-conteudo-form">+ Novo Conteúdo</button>
+                <div id="add-conteudo-form" class="add-topic-form">
+                    <form asp-action="AddConteudo" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva o novo conteúdo..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Atividades -->
+        <div class="edvee-box atividades">
+            <h3>Atividades</h3>
+            <div class="edvee-table">
+                @foreach (var a in Model.Atividades)
+                {
+                    <div class="edvee-row">
+                        <div class="edvee-cell">
+                            <!-- Pontos de conexão à esquerda -->
+                            <div class="connection-point-container connection-points-left">
+                                <div class="connection-point" data-section="Atividade" data-for="Atividade-@a.Id"></div>
+                            </div>
+                            <div class="connectable" data-id="Atividade-@a.Id" data-section="Atividade">
+                                @a.Texto
+                            </div>
+                        </div>
+                        <div class="edvee-cell actions">
+                            <div class="dropdown">
+                                <button class="dropbtn">⋮</button>
+                                <div class="dropdown-content">
+                                    <a href="/UC/EditAtividade/@a.Id">Editar</a>
+                                    <form asp-action="DeleteAtividade" method="post">
+                                        <input type="hidden" name="id" value="@a.Id" />
+                                        <button type="submit" class="dropdown-btn">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="add-topic-container">
+                <button class="add-topic-btn" data-target="add-atividade-form">+ Nova Atividade</button>
+                <div id="add-atividade-form" class="add-topic-form">
+                    <form asp-action="AddAtividade" method="post">
+                        <input type="hidden" name="ucId" value="@Model.UnidadeCurricular.Id" />
+                        <textarea name="texto" placeholder="Descreva a nova atividade..." rows="3"></textarea>
+                        <div class="add-topic-actions">
+                            <button type="button" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-confirm">Adicionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

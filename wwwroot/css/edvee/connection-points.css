@@ -1,0 +1,94 @@
+/* EdVee Connection Points - Visual connection points and positioning */
+
+/* Connection Point Containers */
+.connection-point-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    z-index: 5;
+}
+
+.connection-points-left {
+    left: -25px;
+}
+
+.connection-points-right {
+    right: -25px;
+}
+
+/* Connection Points */
+.connection-point {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid;
+    z-index: 10;
+    cursor: pointer;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.connection-point:hover {
+    transform: translateX(-50%) scale(1.5);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.9);
+    z-index: 15;
+}
+
+.connection-point.selected-element {
+    transform: translateX(-50%) scale(1.35);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.9);
+    z-index: 15;
+    border-width: 2.5px;
+}
+
+.connection-point.connection-mode {
+    box-shadow: 0 0 8px rgba(33, 150, 243, 0.6);
+    border-width: 2.5px;
+}
+
+/* Section-specific Connection Point Colors */
+.connection-point[data-section="Competencia"] {
+    border-color: #e91e63;
+    box-shadow: 0 0 5px rgba(233, 30, 99, 0.4);
+}
+
+.connection-point[data-section="Avaliacao"] {
+    border-color: #2196f3;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.4);
+}
+
+.connection-point[data-section="Conteudo"] {
+    border-color: #ffc107;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.4);
+}
+
+.connection-point[data-section="Atividade"] {
+    border-color: #4caf50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+}
+
+/* Section-specific Hover Effects */
+.connection-point[data-section="Competencia"]:hover {
+    transform: translateX(-50%) scale(1.6);
+    box-shadow: 0 0 15px rgba(233, 30, 99, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+
+.connection-point[data-section="Avaliacao"]:hover {
+    transform: translateX(-50%) scale(1.6);
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+
+.connection-point[data-section="Conteudo"]:hover {
+    transform: translateX(-50%) scale(1.6);
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+
+.connection-point[data-section="Atividade"]:hover {
+    transform: translateX(-50%) scale(1.6);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.9);
+}

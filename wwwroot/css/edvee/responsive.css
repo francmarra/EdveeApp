@@ -1,0 +1,114 @@
+/* EdVee Responsive - Mobile responsiveness and compact styling overrides */
+
+/* Compact Styling Overrides */
+.add-topic-container {
+    padding: 5px !important;
+}
+
+.add-topic-btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    border-radius: 3px !important;
+}
+
+.add-topic-form {
+    margin-top: 6px !important;
+    padding: 8px !important;
+}
+
+.add-topic-form textarea {
+    min-height: 45px !important;
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+}
+
+.btn-cancel, .btn-confirm {
+    padding: 4px 10px !important;
+    font-size: 11px !important;
+    min-width: 65px !important;
+}
+
+/* Further Compact Layout Adjustments */
+.connection-points-left {
+    left: -16px;
+}
+
+.connection-points-right {
+    right: -16px;
+}
+
+.connection-point {
+    width: 12px;
+    height: 12px;
+}
+
+.dropbtn {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 14px !important;
+}
+
+.dropdown-content {
+    min-width: 90px;
+}
+
+.dropdown-content a {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.dropdown-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.connection-instructions {
+    padding: 6px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.connection-controls {
+    margin: 10px 0;
+    gap: 6px;
+}
+
+.connectable {
+    padding: 3px 6px !important;
+    margin: 1px 0 !important;
+    font-size: 11px !important;
+    line-height: 1.1 !important;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+    .dropdown-content {
+        right: 0;
+        min-width: 100px;
+    }
+    
+    .edvee-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .edvee-box {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .connection-points-left,
+    .connection-points-right {
+        display: none;
+    }
+    
+    .connection-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .connection-controls button {
+        margin: 5px 0;
+    }
+}
